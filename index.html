@@ -128,7 +128,8 @@
 </div>
 
 <div class="tabs" id="tabs"></div>
-<div class="filter-bar" id="filterBar"></div>
+<div class="tabs" id="moodTabs" style="top:150px;z-index:97;"></div>
+<div class="filter-bar" id="filterBar" style="top:192px;z-index:96;"></div>
 <div class="result-count" id="resultCount"></div>
 <div class="list" id="list"></div>
 
@@ -919,6 +920,16 @@ function toggleFav(id, e) {
   var openDetail = document.getElementById("overlay").classList.contains("active");
   if (openDetail) { openDetailView(id); }
 }
+var moods = ["전체", "접대", "회식", "캐주얼"];
+var currentMood = "전체";
+
+function renderMoodTabs() {
+  document.getElementById("moodTabs").innerHTML = moods.map(function(m) {
+    return '<div class="tab ' + (m === currentMood ? 'active' : '') + '" onclick="selectMood(\'' + m + '\')">' + m + '</div>';
+  }).join("");
+}
+function selectMood(m) { currentMood = m; renderMoodTabs(); renderList(); }
+
 var distanceFilters = [
   { label: "전체", max: 999 },
   { label: "500m 이내", max: 0.5 },
@@ -972,8 +983,9 @@ function renderList() {
   var listEl = document.getElementById("list");
   var filtered = restaurants.filter(function(r) {
     var catMatch = currentCategory === "전체" || r.category === currentCategory || (currentCategory === "⭐ 즐겨찾기" && isFav(r.id));
-    if (currentCategory === "⭐ 즐겨찾기") return isFav(r.id) && r.distance <= currentMaxDistance;
-    return catMatch && r.distance <= currentMaxDistance;
+    var moodMatch = currentMood === "전체" || r.mood === currentMood;
+    if (currentCategory === "⭐ 즐겨찾기") return isFav(r.id) && r.distance <= currentMaxDistance && moodMatch;
+    return catMatch && r.distance <= currentMaxDistance && moodMatch;
   });
   filtered.sort(function(a, b) { return a.distance - b.distance; });
 
@@ -991,7 +1003,6 @@ function renderList() {
     if (r.corkage === '콜키지 프리') b += '<span class="badge badge-corkage">콜키지 프리</span>';
     else if (r.corkage === '1병 무료') b += '<span class="badge badge-corkage">콜키지 1병 무료</span>';
     if (r.parking && r.parking !== '불가' && r.parking !== '불가 (백화점 내)') b += '<span class="badge badge-parking">주차</span>';
-    if (r.catchTableId) b += '<span class="badge badge-catchtable">캐치테이블</span>';
     if (r.mood === '접대') b += '<span class="badge badge-formal">접대</span>';
     else if (r.mood === '회식') b += '<span class="badge badge-casual">회식</span>';
 
@@ -1072,6 +1083,7 @@ document.addEventListener("keydown", function(e) { if (e.key === "Escape") close
 
 calcDistances();
 renderTabs();
+renderMoodTabs();
 renderDistanceFilter();
 renderList();
 </script>
