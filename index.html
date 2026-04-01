@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHN-판교역 주변 식당 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #c9a96e;
+    --primary-light: rgba(201,169,110,0.12);
+    --bg: #111;
+    --card-bg: #1a1a1a;
+    --text: #e0e0e0;
+    --text-light: #888;
+    --border: #262626;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header { background: #0a0a0a; color: #fff; padding: 22px 20px 18px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+  .header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: var(--primary); }
+
+  .controls { background: #0f0f0f; border-bottom: 1px solid var(--border); position: sticky; top: 60px; z-index: 99; }
+  .control-row { display: flex; gap: 8px; padding: 10px 20px; align-items: center; }
+  .control-row select { flex: 1; padding: 9px 12px; border: 1.5px solid #333; border-radius: 8px; font-size: 13px; font-family: 'Nanum Gothic', sans-serif; background: #1a1a1a; color: var(--text); font-weight: 700; cursor: pointer; }
+  .control-row select:focus { border-color: var(--primary); outline: none; }
+
+  .tabs { display: flex; gap: 8px; padding: 12px 20px; overflow-x: auto; background: #0f0f0f; border-bottom: 1px solid var(--border); position: sticky; top: 108px; z-index: 98; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 7px 16px; border-radius: 18px; border: 1.5px solid #333; background: transparent; font-size: 12px; font-family: 'Nanum Gothic', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: var(--text-light); }
+  .tab.active { background: var(--primary); color: #111; border-color: var(--primary); }
+  .tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+  .filter-bar { display: flex; gap: 6px; padding: 10px 20px; background: #0f0f0f; border-bottom: 1px solid var(--border); position: sticky; top: 150px; z-index: 97; }
+  .filter-chip { padding: 5px 12px; border-radius: 14px; border: 1px solid #333; background: transparent; font-size: 11px; font-family: 'Nanum Gothic', sans-serif; font-weight: 700; cursor: pointer; color: var(--text-light); transition: all 0.2s; }
+  .filter-chip.active { background: #2a2a2a; color: var(--text); border-color: #555; }
+
+  .result-count { padding: 10px 20px 4px; font-size: 11px; color: var(--text-light); max-width: 800px; margin: 0 auto; }
+  .list { padding: 6px 20px 20px; display: flex; flex-direction: column; gap: 10px; max-width: 800px; margin: 0 auto; }
+
+  .card { background: var(--card-bg); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.2s; border: 1px solid var(--border); }
+  .card:hover { transform: translateY(-2px); border-color: #3a3a3a; }
+  .card-body { padding: 16px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-title-area { flex: 1; min-width: 0; }
+  .card-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .card-name { font-size: 16px; font-weight: 800; color: #fff; }
+  .card-distance { font-size: 11px; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+  .card-price { font-size: 11px; color: var(--primary); font-weight: 700; background: var(--primary-light); padding: 4px 10px; border-radius: 10px; white-space: nowrap; border: 1px solid rgba(201,169,110,0.25); flex-shrink: 0; margin-left: 10px; }
+  .card-category { font-size: 12px; color: var(--text-light); }
+  .card-addr { font-size: 11px; color: #666; margin-top: 5px; }
+  .card-menu { font-size: 12px; color: var(--text-light); margin-top: 10px; margin-bottom: 12px; }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 700; }
+  .badge-room { background: rgba(160,200,160,0.15); color: #8abf8a; border: 1px solid rgba(160,200,160,0.25); }
+  .badge-corkage { background: rgba(210,180,120,0.12); color: #c9a96e; border: 1px solid rgba(210,180,120,0.25); }
+  .badge-parking { background: rgba(140,170,220,0.12); color: #8aaade; border: 1px solid rgba(140,170,220,0.2); }
+  .badge-catchtable { background: rgba(220,130,160,0.12); color: #d88aa0; border: 1px solid rgba(220,130,160,0.2); }
+  .badge-formal { background: rgba(201,169,110,0.15); color: #c9a96e; border: 1px solid rgba(201,169,110,0.3); }
+  .badge-casual { background: rgba(120,180,220,0.12); color: #7ab4dc; border: 1px solid rgba(120,180,220,0.2); }
+  .badge-fav { background: rgba(255,215,0,0.12); color: #f0c040; border: 1px solid rgba(255,215,0,0.25); }
+
+  .fav-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 2px 4px; line-height: 1; transition: transform 0.2s; flex-shrink: 0; }
+  .fav-btn:hover { transform: scale(1.2); }
+  .fav-btn.active { animation: favPop 0.3s ease; }
+  @keyframes favPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; justify-content: center; align-items: flex-end; }
+  .overlay.active { display: flex; }
+  .detail { background: #161616; width: 100%; max-width: 800px; max-height: 90vh; border-radius: 20px 20px 0 0; overflow-y: auto; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .detail-header { position: sticky; top: 0; background: #161616; padding: 20px 20px 12px; border-bottom: 1px solid var(--border); z-index: 1; }
+  .detail-handle { width: 40px; height: 4px; background: #333; border-radius: 2px; margin: 0 auto 16px; }
+  .detail-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .detail-sub { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+  .detail-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .reservation-box { margin: 16px; padding: 16px; background: rgba(201,169,110,0.06); border-radius: var(--radius); border: 1px solid rgba(201,169,110,0.25); }
+  .reservation-box h3 { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+  .reservation-box .phone { font-size: 22px; font-weight: 800; color: #fff; text-decoration: none; display: block; margin-bottom: 12px; }
+  .reservation-box .phone:hover { color: var(--primary); }
+  .reservation-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .reservation-links a { display: inline-flex; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-family: 'Nanum Gothic', sans-serif; font-weight: 700; text-decoration: none; transition: opacity 0.2s; border: 1px solid; }
+  .reservation-links a:hover { opacity: 0.8; }
+  .link-naver { background: rgba(3,199,90,0.1); color: #4eca7a; border-color: rgba(3,199,90,0.25); }
+  .link-catchtable { background: rgba(220,130,160,0.1); color: #d88aa0; border-color: rgba(220,130,160,0.2); }
+  .link-google { background: rgba(100,150,240,0.1); color: #7aa8f0; border-color: rgba(100,150,240,0.2); }
+
+  .detail-section { padding: 16px; border-bottom: 1px solid #1e1e1e; }
+  .detail-section h4 { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+  .info-grid { display: grid; grid-template-columns: 70px 1fr; gap: 8px 12px; font-size: 12px; }
+  .info-label { color: var(--text-light); font-weight: 700; }
+  .menu-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+  .menu-table tr { border-bottom: 1px solid #1e1e1e; }
+  .menu-table td { padding: 8px 2px; color: var(--text); }
+  .menu-table td:last-child { text-align: right; font-weight: 700; color: var(--primary); white-space: nowrap; }
+  .note-text { font-size: 12px; color: var(--text-light); line-height: 1.6; }
+  .footer-text { padding: 20px 16px; text-align: center; color: #555; font-size: 11px; }
+  .close-btn { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #333; background: #222; color: #888; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .close-btn:hover { background: #333; color: #fff; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 14px; }
+
+  @media (min-width: 600px) {
+    .header { padding: 24px 32px 20px; }
+    .header h1 { font-size: 23px; }
+    .control-row, .tabs, .filter-bar, .list, .result-count { padding-left: 32px; padding-right: 32px; }
+    .detail { border-radius: 20px; margin: auto; max-height: 85vh; }
+    .overlay { align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>NHN-판교역 주변 식당 가이드</h1>
+</div>
+
+<div class="controls">
+  <div class="control-row">
+    <select id="baseSelect" onchange="changeBase()">
+      <option value="nhn">NHN 기준 (가까운 순)</option>
+      <option value="pangyo">판교역 기준 (가까운 순)</option>
+    </select>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="filter-bar" id="filterBar"></div>
+<div class="result-count" id="resultCount"></div>
+<div class="list" id="list"></div>
+
+<div class="overlay" id="overlay" onclick="closeDetail(event)">
+  <div class="detail" id="detail" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+var bases = {
+  nhn: { name: "NHN", lat: 37.40057, lng: 127.10441 },
+  pangyo: { name: "판교역", lat: 37.39473, lng: 127.11119 }
+};
+var currentBase = "nhn";
+
+function getDistance(lat1, lng1, lat2, lng2) {
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLng = (lng2 - lng1) * Math.PI / 180;
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+var restaurants = [
+  // ═══════ 한식 ═══════
+  {
+    id: 1, name: "경복궁 판교점", category: "한식", subcategory: "한정식 · 코스요리", mood: "접대",
+    priceRange: "1인 7~10만원", shortAddr: "푸르지오월드마크 2F",
+    address: "경기 성남시 분당구 대왕판교로606번길 58 판교푸르지오월드마크 2층",
+    phone: "031-8016-8038", hours: "월~토 11:30~22:00 (BT 15:00~17:00)",
+    signature: "꽃등심 코스, 상견례 한정식",
+    hasRoom: true, roomInfo: "전 좌석 룸 (홀 없음), 최소 2인", corkage: "전화 문의", parking: "건물 내 주차 가능",
+    lat: 37.39180, lng: 127.11250,
+    menus: [{name:"상견례 한정식 코스",price:"78,000원"},{name:"꽃등심 코스",price:"시세"},{name:"양념갈비 정식",price:"45,000원"},{name:"불고기 정식",price:"38,000원"}],
+    naverQuery: "판교 경복궁 한정식", catchTableId: null, googleQuery: "경복궁+판교점+한정식",
+    note: "전 좌석 룸. 상견례·임원식사·접대에 최적."
+  },
+  {
+    id: 2, name: "순우가", category: "한식", subcategory: "한우 전문점", mood: "접대",
+    priceRange: "1인 5~10만원", shortAddr: "NS별관 B1",
+    address: "경기 성남시 분당구 대왕판교로645번길 36 NS별관 지하1층",
+    phone: "031-712-0222", hours: "매일 11:00~21:30 (BT 15:00~17:00)",
+    signature: "한우 특선모듬, 한우 구이",
+    hasRoom: true, roomInfo: "프라이빗 룸 보유, 최소 2인", corkage: "전화 문의", parking: "평일 2시간, 주말 무제한",
+    lat: 37.40100, lng: 127.10550,
+    menus: [{name:"한우 특선모듬 (500g)",price:"210,000원"},{name:"한우 꽃등심 (200g)",price:"89,000원"},{name:"한우 불고기",price:"45,000원"},{name:"된장찌개 정식",price:"12,000원"}],
+    naverQuery: "판교 순우가 한우", catchTableId: null, googleQuery: "순우가+판교+한우",
+    note: "주중 런치 10%↓, 디너 20%↓. 주말 한우구이류 50%↓."
+  },
+  {
+    id: 3, name: "한와담 판교점", category: "한식", subcategory: "한우 · 가정식", mood: "회식",
+    priceRange: "1인 1.5~6만원", shortAddr: "알파돔타워 1F",
+    address: "경기 성남시 분당구 판교역로 152 알파돔타워 6차 1층",
+    phone: "0507-1316-0582", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
+    signature: "차돌볶음+된장찌개, 한우코스",
+    hasRoom: true, roomInfo: "대형 룸 보유 (최대 30명)", corkage: "콜키지 프리", parking: "알파돔타워 3시간 무료",
+    lat: 37.39420, lng: 127.11035,
+    menus: [{name:"차돌볶음+된장찌개",price:"15,000원"},{name:"김치찌개",price:"13,000원"},{name:"한우 특수부위 모듬",price:"59,000원"},{name:"한우 갈비살",price:"49,000원"}],
+    naverQuery: "판교 한와담", catchTableId: "hanmedam_pg", googleQuery: "한와담+판교점",
+    note: "콜키지 프리. 대형 룸(최대 30명) 보유. 회식·단체모임 추천."
+  },
+  {
+    id: 4, name: "해우리 판교점", category: "한식", subcategory: "한정식 · 생선구이", mood: "접대",
+    priceRange: "1인 2.5~5만원", shortAddr: "판교알파돔시티 2동 B1",
+    address: "경기 성남시 분당구 판교역로 145 판교알파돔시티 2동 지하1층",
+    phone: "031-701-4997", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
+    signature: "보리굴비정식, 갈치구이한상",
+    hasRoom: true, roomInfo: "전 좌석 룸 (대형룸 최대 66명)", corkage: "유료 (전화문의)", parking: "알파돔시티 주차 가능",
+    lat: 37.39400, lng: 127.10980,
+    menus: [{name:"보리굴비 정식",price:"42,000원"},{name:"갈치구이 한상",price:"29,000원"},{name:"장어덮밥",price:"25,000원"},{name:"해우리 특정식",price:"49,000원"}],
+    naverQuery: "판교 해우리", catchTableId: null, googleQuery: "해우리+판교점",
+    note: "전 좌석 룸. 대형룸 66명 수용. 격식 있는 접대에 적합."
+  },
+  {
+    id: 5, name: "여의나룻 판교점", category: "한식", subcategory: "한우탕 · 보양식", mood: "캐주얼",
+    priceRange: "1인 1.5~4만원", shortAddr: "판교테크원타워 2F",
+    address: "경기 성남시 분당구 분당내곡로 131 판교테크원타워 2층",
+    phone: "031-703-5553", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
+    signature: "한우탕, 한우 육개장",
+    hasRoom: false, roomInfo: "룸 없음 (홀 좌석)", corkage: "불가", parking: "테크원타워 주차 가능",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"한우탕",price:"16,000원"},{name:"한우 육개장",price:"15,000원"},{name:"한우 수육",price:"42,000원"},{name:"한우 불고기",price:"38,000원"}],
+    naverQuery: "판교 여의나룻", catchTableId: null, googleQuery: "여의나룻+판교점",
+    note: "한우탕·육개장 유명. 가볍게 점심 식사하기 좋은 곳."
+  },
+  {
+    id: 6, name: "해미옥 판교점", category: "한식", subcategory: "해물 · 술집", mood: "회식",
+    priceRange: "1인 1.3~5만원", shortAddr: "판교역푸르지오시티 B1",
+    address: "경기 성남시 분당구 대왕판교로606번길 41 판교역푸르지오시티 지하1층",
+    phone: "031-702-0592", hours: "매일 11:00~24:00 (BT 15:00~17:00, 일 휴무)",
+    signature: "해물칼국수(런치), 모듬회",
+    hasRoom: false, roomInfo: "반개방 공간", corkage: "유료", parking: "공영주차장 이용",
+    lat: 37.39200, lng: 127.11180,
+    menus: [{name:"해물칼국수 (런치)",price:"13,000원"},{name:"고등어구이 (런치)",price:"13,000원"},{name:"해미전골 (중)",price:"49,000원"},{name:"참소라 숙회",price:"25,000원"}],
+    naverQuery: "판교 해미옥", catchTableId: null, googleQuery: "해미옥+판교점",
+    note: "점심엔 칼국수, 저녁엔 해물안주+술. 일요일 휴무."
+  },
+  {
+    id: 7, name: "방유당 그레이츠판교점", category: "한식", subcategory: "컨템퍼러리 한식 · 정찬", mood: "접대",
+    priceRange: "1인 2.4~13만원", shortAddr: "그레이츠판교 B1",
+    address: "경기 성남시 분당구 분당내곡로 117 그레이츠판교 지하1층 108호",
+    phone: "050-7132-0690", hours: "매일 11:00~22:00 (BT 15:00~17:30)",
+    signature: "점심 반상, 저녁 정찬 코스",
+    hasRoom: true, roomInfo: "프라이빗 룸 5개 (4인석 3, 6인석 2)", corkage: "전화 문의", parking: "그레이츠판교 주차장",
+    lat: 37.39350, lng: 127.10750,
+    menus: [{name:"점심 반상",price:"24,000원~33,000원"},{name:"한상차림 (2인)",price:"110,000원"},{name:"저녁 정찬 코스",price:"89,000원~128,000원"}],
+    naverQuery: "방유당 그레이츠판교", catchTableId: "bangyudang", googleQuery: "방유당+그레이츠판교",
+    note: "프라이빗 룸 5개. 고급 접대·소규모 모임에 최적."
+  },
+  {
+    id: 8, name: "우화 판교 아브뉴프랑점", category: "한식", subcategory: "한우 오마카세", mood: "접대",
+    priceRange: "1인 13~23만원", shortAddr: "아브뉴프랑 2F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 2층",
+    phone: "0507-1354-4775", hours: "월~일 11:30~21:30 (BT 14:30~17:00)",
+    signature: "한우 오마카세 코스",
+    hasRoom: true, roomInfo: "프라이빗 룸 (최대 15인), 100% 예약제", corkage: "전화 문의", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"런치 코스",price:"129,000원"},{name:"디너 바 코스",price:"159,000원"},{name:"룸 디너 코스",price:"230,000원"}],
+    naverQuery: "우화 판교 아브뉴프랑", catchTableId: "wuhwa", googleQuery: "우화+판교+한우+오마카세",
+    note: "최고급 한우 오마카세. VIP 접대에 최적. 100% 예약제."
+  },
+  {
+    id: 9, name: "로스옥 판교점", category: "한식", subcategory: "한우 로스구이", mood: "접대",
+    priceRange: "1인 5~10만원", shortAddr: "아브뉴프랑 1F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 1층",
+    phone: "전화문의 (캐치테이블 예약)", hours: "월~토 11:30~22:00 (BT 15:00~17:00), 일 ~21:00",
+    signature: "숙성등심, 꽃살로스, 평양냉면",
+    hasRoom: false, roomInfo: "룸 없음 (넓은 홀, 테이블 간격 여유)", corkage: "콜키지 프리", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"숙성등심",price:"시세"},{name:"꽃살로스",price:"시세"},{name:"평양냉면",price:"16,000원"},{name:"갈비탕",price:"18,000원"}],
+    naverQuery: "판교 로스옥 한우", catchTableId: null, googleQuery: "로스옥+판교+한우",
+    note: "삼원가든 계열. 콜키지 프리. 고급 한우 접대."
+  },
+  {
+    id: 42, name: "능라도 판교본점", category: "한식", subcategory: "평양냉면", mood: "접대",
+    priceRange: "1인 1.5~5만원", shortAddr: "산운로32번길",
+    address: "경기 성남시 분당구 산운로32번길 12",
+    phone: "0507-1474-3989", hours: "매일 11:00~21:30",
+    signature: "평양냉면, 수육, 어복쟁반",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "발렛 3,000원",
+    lat: 37.39350, lng: 127.10400,
+    menus: [{name:"평양냉면",price:"15,000원"},{name:"수육 (대)",price:"50,000원"},{name:"어복쟁반",price:"45,000원"},{name:"녹두지짐이",price:"20,000원"}],
+    naverQuery: "판교 능라도 평양냉면", catchTableId: null, googleQuery: "능라도+판교+평양냉면",
+    note: "판교 대표 평양냉면. 접대·격식있는 자리에 적합."
+  },
+  {
+    id: 43, name: "해누리 분당점", category: "한식", subcategory: "한정식", mood: "접대",
+    priceRange: "1인 3~5만원", shortAddr: "인스코빌딩 1·2층",
+    address: "경기 성남시 분당구 대왕판교로 187 인스코빌딩 1,2층",
+    phone: "031-718-3162", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
+    signature: "온누리정식 (불고기+보리굴비+양념게장)",
+    hasRoom: true, roomInfo: "단체룸 예약 가능", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.39400, lng: 127.10550,
+    menus: [{name:"온누리정식",price:"35,000원"},{name:"보리굴비정식",price:"30,000원"},{name:"갈치구이정식",price:"28,000원"},{name:"불고기정식",price:"25,000원"}],
+    naverQuery: "분당 해누리 한정식", catchTableId: "haenuri_bd", googleQuery: "해누리+분당+한정식",
+    note: "정갈한 한정식. 룸 보유. 접대에 적합."
+  },
+  // ═══════ 중식 ═══════
+  {
+    id: 10, name: "팔복 판교점", category: "중식", subcategory: "정통 중식 · 룸", mood: "접대",
+    priceRange: "1인 2~5만원", shortAddr: "판교엠타워 1F",
+    address: "경기 성남시 분당구 판교역로241번길 22 판교엠타워 1층",
+    phone: "031-8017-8881", hours: "매일 11:00~22:00 (BT 15:00~17:00, LO 14:00/20:30)",
+    signature: "팔복초마(짬뽕), 목화솜 레몬크림새우",
+    hasRoom: true, roomInfo: "전 좌석 룸 (소수~대규모)", corkage: "1병 무료", parking: "엠타워 3시간 무료",
+    lat: 37.40271, lng: 127.10681,
+    menus: [{name:"팔복초마 (짬뽕)",price:"15,000원"},{name:"목화솜 레몬크림새우",price:"26,000원"},{name:"쑤저우 연잎 동파육",price:"32,000원"},{name:"게살 차오판",price:"13,000원"},{name:"탕수육 (대)",price:"28,000원"}],
+    naverQuery: "판교 팔복", catchTableId: "eightbock_pg", googleQuery: "팔복+판교점+중식",
+    note: "전 좌석 룸. 콜키지 1병 무료. 접대·회식 추천."
+  },
+  {
+    id: 11, name: "차알 판교점", category: "중식", subcategory: "아메리칸 차이니즈", mood: "캐주얼",
+    priceRange: "1인 2~5만원", shortAddr: "아브뉴프랑 2F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 2층",
+    phone: "0507-1408-7679", hours: "매일 11:00~22:00 (BT 15:00~17:00, LO 21:00)",
+    signature: "게살볶음밥, 게살숲, 런치세트",
+    hasRoom: false, roomInfo: "룸 없음 (오픈형 홀)", corkage: "콜키지 프리", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"런치 A세트 (탕수육S+밥/면 2종)",price:"39,000원"},{name:"게살볶음밥",price:"18,000원"},{name:"게살숲",price:"22,000원"},{name:"칠리새우",price:"26,000원"}],
+    naverQuery: "판교 차알 아브뉴프랑", catchTableId: null, googleQuery: "차알+판교+중식",
+    note: "미국식 중화요리. 콜키지 프리. 캐주얼 분위기."
+  },
+  {
+    id: 12, name: "몽중헌 판교점", category: "중식", subcategory: "프리미엄 중식 · 딤섬", mood: "접대",
+    priceRange: "1인 5~12만원", shortAddr: "판교테크원타워 2F",
+    address: "경기 성남시 분당구 분당내곡로 131 판교테크원타워 2층",
+    phone: "031-601-7574", hours: "평일 11:30~22:00 (BT 15:00~17:30), 주말 저녁 ~21:30",
+    signature: "돼지고기 탕수육, 딤섬, 한우짜장면",
+    hasRoom: true, roomInfo: "대부분 룸 구성 (코스 주문 시 룸 예약)", corkage: "전화 문의", parking: "테크원타워 주차장",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"탕수육",price:"45,000원"},{name:"유린기",price:"45,000원"},{name:"한우 일품짜장면",price:"16,000원"},{name:"우육탕면",price:"22,000원"},{name:"딤섬류",price:"14,000원~"}],
+    naverQuery: "판교 몽중헌", catchTableId: "mongjungheon_pg", googleQuery: "몽중헌+판교점",
+    note: "대부분 룸. 코스 주문 시 룸 예약 가능. 고급 접대에 최적."
+  },
+  {
+    id: 13, name: "페이딤 판교점", category: "중식", subcategory: "북경오리 · 딤섬", mood: "회식",
+    priceRange: "1인 3~6만원", shortAddr: "알파돔타워 2F",
+    address: "경기 성남시 분당구 판교역로 152 알파돔타워 2층",
+    phone: "0507-1420-8528", hours: "월~금 11:00~22:00 (BT 15:00~17:00), 토~일 11:30~22:00",
+    signature: "트러플 스테이크 볶음밥, 꿔바로우",
+    hasRoom: false, roomInfo: "단체 가능 (확인 필요)", corkage: "전화 문의", parking: "알파돔타워 주차장",
+    lat: 37.39420, lng: 127.11035,
+    menus: [{name:"트러플 스테이크 볶음밥",price:"28,000원"},{name:"어니언버터 꿔바로우",price:"55,000원"},{name:"황비홍 깐풍기",price:"40,000원"},{name:"간장유자 유린기",price:"40,000원"}],
+    naverQuery: "판교 페이딤", catchTableId: "peidim_pangyo", googleQuery: "페이딤+판교점",
+    note: "트렌디한 중식. 캐치테이블 예약 가능."
+  },
+  {
+    id: 14, name: "JS가든 현대백화점 판교점", category: "중식", subcategory: "차이니즈 파인다이닝", mood: "접대",
+    priceRange: "1인 6~12만원", shortAddr: "현대백화점 판교 9F",
+    address: "경기 성남시 분당구 판교역로146번길 20 현대백화점 판교 9층",
+    phone: "031-5170-1957", hours: "매일 11:00~22:00",
+    signature: "북경오리, 목화솜탕수육, 코스",
+    hasRoom: true, roomInfo: "단체룸 이용 가능", corkage: "전화 문의", parking: "현대백화점 3시간 무료",
+    lat: 37.39280, lng: 127.11199,
+    menus: [{name:"북경오리 (한 마리)",price:"120,000원"},{name:"목화솜탕수육 (S)",price:"45,000원"},{name:"런치코스",price:"50,000원~70,000원"},{name:"디너코스",price:"88,000원~120,000원"}],
+    naverQuery: "JS가든 현대백화점 판교", catchTableId: null, googleQuery: "JS가든+현대백화점+판교",
+    note: "백화점 내 파인다이닝 중식. 북경오리 유명. 고급 접대."
+  },
+  {
+    id: 15, name: "덕후선생 아브뉴프랑점", category: "중식", subcategory: "북경오리 · 우육면", mood: "회식",
+    priceRange: "1인 2~4만원", shortAddr: "아브뉴프랑 2F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 2층",
+    phone: "전화문의", hours: "11:30~21:30 (BT 14:30~17:00)",
+    signature: "쯔란갈비, 우육면, 동파육",
+    hasRoom: true, roomInfo: "개별룸 보유", corkage: "전화 문의", parking: "아브뉴프랑 주차장 3시간 무료",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"쯔란갈비",price:"31,000원"},{name:"우육면",price:"20,000원"},{name:"바오번",price:"12,000원"},{name:"동파육",price:"35,000원"}],
+    naverQuery: "판교 덕후선생 아브뉴프랑", catchTableId: "generousduckoo_pangyo", googleQuery: "덕후선생+아브뉴프랑+판교",
+    note: "개별룸 보유. 합리적 가격의 중식. 회식에 적합."
+  },
+  {
+    id: 16, name: "하이보 판교점", category: "중식", subcategory: "딤섬 코스", mood: "회식",
+    priceRange: "1인 3~6만원", shortAddr: "삼평동",
+    address: "경기 성남시 분당구 동판교로266번길 14, 4층 419호",
+    phone: "전화문의", hours: "매일 11:00~22:00",
+    signature: "딤섬 A코스, B코스",
+    hasRoom: true, roomInfo: "넓은 룸 (단체/가족모임 가능)", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.40120, lng: 127.10330,
+    menus: [{name:"딤섬 A코스",price:"35,000원~"},{name:"딤섬 B코스",price:"55,000원~"},{name:"단품 딤섬",price:"12,000원~"}],
+    naverQuery: "판교 하이보 딤섬", catchTableId: null, googleQuery: "하이보+판교+딤섬",
+    note: "넓은 룸. 딤섬 코스 전문. 단체 회식 추천."
+  },
+  // ═══════ 일식 ═══════
+  {
+    id: 20, name: "긴자 판교점", category: "일식", subcategory: "프리미엄 일식 · 룸", mood: "접대",
+    priceRange: "1인 5~15만원", shortAddr: "신화푸드빌리지 3F",
+    address: "경기 성남시 분당구 판교로 185 신화푸드빌리지 3층",
+    phone: "031-8017-8883", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
+    signature: "프리미엄 초밥, 사시미 정식 코스",
+    hasRoom: true, roomInfo: "프라이빗 룸 다수 (대형 룸 보유)", corkage: "전화 문의", parking: "건물 내 주차 가능",
+    lat: 37.39580, lng: 127.11280,
+    menus: [{name:"긴자 프리미엄 초밥",price:"시세"},{name:"사시미 정식 코스",price:"80,000원~"},{name:"런치 코스",price:"45,000원~"},{name:"디너 코스",price:"90,000원~"}],
+    naverQuery: "판교 긴자 일식", catchTableId: "pangyo_ginza", googleQuery: "긴자+판교+일식",
+    note: "170석 대형 일식당. 접대·돌잔치 인기. 캐치테이블 예약."
+  },
+  {
+    id: 21, name: "삿뽀로", category: "일식", subcategory: "일식 종합 · 룸", mood: "접대",
+    priceRange: "1인 3~8만원", shortAddr: "판교골드타워 2F",
+    address: "경기 성남시 분당구 판교역로 235 판교골드타워 2층",
+    phone: "031-698-2244", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
+    signature: "참다랑어 코스, 사시미 모듬",
+    hasRoom: true, roomInfo: "프라이빗 룸 다수 보유", corkage: "전화 문의", parking: "골드타워 지하주차 3시간 무료",
+    lat: 37.40180, lng: 127.11000,
+    menus: [{name:"참다랑어 코스",price:"80,000원~"},{name:"사시미 모듬 (2인)",price:"65,000원"},{name:"스시 정식",price:"35,000원"},{name:"우동 정식",price:"15,000원"}],
+    naverQuery: "판교 삿뽀로 일식", catchTableId: null, googleQuery: "삿뽀로+판교+일식",
+    note: "골드타워 2층. 룸 다수 보유. 접대·회식 적합."
+  },
+  {
+    id: 22, name: "스시혼 판교본점", category: "일식", subcategory: "프리미엄 오마카세", mood: "접대",
+    priceRange: "1인 5.5~13만원", shortAddr: "판교역로192번길 2F",
+    address: "경기 성남시 분당구 판교역로192번길 14-2 2층",
+    phone: "031-701-1155", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
+    signature: "프리미엄 오마카세, 런치 오마카세",
+    hasRoom: false, roomInfo: "룸 없음 (카운터석)", corkage: "전화 문의", parking: "인근 주차장",
+    lat: 37.39700, lng: 127.11150,
+    menus: [{name:"런치 오마카세",price:"55,000원"},{name:"디너 오마카세",price:"99,000원"},{name:"프리미엄 오마카세",price:"130,000원"}],
+    naverQuery: "판교 스시혼 오마카세", catchTableId: "hon", googleQuery: "스시혼+판교본점",
+    note: "판교 대표 프리미엄 오마카세. 특별한 접대에 추천."
+  },
+  {
+    id: 23, name: "스시이찌 판교점", category: "일식", subcategory: "가성비 오마카세", mood: "캐주얼",
+    priceRange: "1인 2.9~3.9만원", shortAddr: "판교역로192번길",
+    address: "경기 성남시 분당구 판교역로192번길 16",
+    phone: "0507-1366-4870", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
+    signature: "스시 오마카세 15종",
+    hasRoom: false, roomInfo: "룸 없음 (카운터석)", corkage: "1인 10,000원", parking: "인근 주차장",
+    lat: 37.39680, lng: 127.11130,
+    menus: [{name:"런치 오마카세",price:"29,000원"},{name:"디너 오마카세",price:"39,000원"},{name:"주말 런치 오마카세",price:"39,000원"}],
+    naverQuery: "판교 스시이찌 오마카세", catchTableId: null, googleQuery: "스시이찌+판교점",
+    note: "합리적 가격의 오마카세 15종. 예약 추천."
+  },
+  {
+    id: 24, name: "스시쿤 판교점", category: "일식", subcategory: "중급 오마카세", mood: "캐주얼",
+    priceRange: "1인 5~6만원", shortAddr: "유스페이스몰 1차 B1",
+    address: "경기 성남시 분당구 대왕판교로660 유스페이스몰 1차 지하1층",
+    phone: "0507-1400-6440", hours: "런치 12:00/13:30, 디너 18:00~ (예약제)",
+    signature: "런치/디너 오마카세",
+    hasRoom: false, roomInfo: "룸 없음 (카운터석)", corkage: "전화 문의", parking: "유스페이스몰 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"런치 오마카세",price:"50,000원"},{name:"디너 오마카세",price:"60,000원"}],
+    naverQuery: "판교 스시쿤", catchTableId: "sushikun_pangyo", googleQuery: "스시쿤+판교",
+    note: "가격대비 푸짐. 캐치테이블 예약 추천. 워크인 어려움."
+  },
+  {
+    id: 25, name: "도원참치 판교본점", category: "일식", subcategory: "참치회 무한리필", mood: "회식",
+    priceRange: "1인 5.9만원", shortAddr: "판교골드타워 2F",
+    address: "경기 성남시 분당구 판교역로192번길 14-2 골드타워 2층",
+    phone: "031-8016-4588", hours: "월~금 11:00~23:00, 토 ~22:00 (일 휴무)",
+    signature: "일품참치 무한리필",
+    hasRoom: true, roomInfo: "룸 보유 (최대 약 140명 수용)", corkage: "1병 20,000원", parking: "지하주차 3시간 무료",
+    lat: 37.40180, lng: 127.11000,
+    menus: [{name:"일품참치 무한리필",price:"59,000원"},{name:"참다랑어, 눈다랑어, 황새치 뱃살 포함",price:""}],
+    naverQuery: "판교 도원참치 무한리필", catchTableId: null, googleQuery: "도원참치+판교본점",
+    note: "참치 무한리필 59,000원. 대규모 단체(140명) 수용. 회식 추천."
+  },
+  {
+    id: 26, name: "스시이도 & 키겐", category: "일식", subcategory: "프리미엄 오마카세", mood: "접대",
+    priceRange: "1인 10~22만원", shortAddr: "아브뉴프랑 B1",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 지하1층 B101호",
+    phone: "031-707-5562", hours: "런치 12:00~14:30, 디너 17:30~22:00 (월 휴무)",
+    signature: "런치/디너 오마카세 코스",
+    hasRoom: false, roomInfo: "룸 없음 (카운터석)", corkage: "전화 문의", parking: "아브뉴프랑 주차장 3시간 무료",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"런치 오마카세",price:"100,000원"},{name:"디너 오마카세",price:"220,000원"}],
+    naverQuery: "판교 스시이도 키겐 오마카세", catchTableId: "sushiido", googleQuery: "스시이도+키겐+판교",
+    note: "판교 최고급 오마카세. VIP 접대. 월요일 휴무."
+  },
+  {
+    id: 27, name: "MOM (엠오엠)", category: "일식", subcategory: "관서식 스키야끼", mood: "회식",
+    priceRange: "1인 2.6~3만원", shortAddr: "판교알파돔시티 1F",
+    address: "경기 성남시 분당구 판교역로 145 1층 126~128동",
+    phone: "전화문의 (캐치테이블)", hours: "11:30~23:00 (BT 15:00~17:00, LO 21:30)",
+    signature: "한우 스키야키, 고등어봉초밥",
+    hasRoom: true, roomInfo: "다양한 룸좌석 보유", corkage: "전화 문의", parking: "알파돔시티 주차장",
+    lat: 37.39400, lng: 127.10980,
+    menus: [{name:"한우 스키야키",price:"30,000원"},{name:"크랩오일 냉파스타",price:"26,000원"},{name:"고등어봉초밥",price:"28,000원"}],
+    naverQuery: "판교 엠오엠 MOM 스키야끼", catchTableId: "MOM", googleQuery: "MOM+엠오엠+판교+스키야끼",
+    note: "룸좌석 다수. 합리적 가격. 회식 추천."
+  },
+  {
+    id: 28, name: "스시가오", category: "일식", subcategory: "초밥 · 라멘", mood: "캐주얼",
+    priceRange: "1인 1~2.5만원", shortAddr: "우림W시티 2F",
+    address: "경기 성남시 분당구 판교로255번길 922 우림W시티 2층",
+    phone: "0507-1415-7828", hours: "매일 ~21:30",
+    signature: "점심특선 (미니라멘+스시)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "건물 주차장",
+    lat: 37.40200, lng: 127.10350,
+    menus: [{name:"점심특선 (미니라멘+스시5피스)",price:"10,000원"},{name:"스시 모듬",price:"22,000원"},{name:"라멘",price:"12,000원"}],
+    naverQuery: "판교 스시가오", catchTableId: null, googleQuery: "스시가오+판교+삼평동",
+    note: "가성비 점심. 직장인 점심 맛집."
+  },
+  // ═══════ 양식/기타 ═══════
+  {
+    id: 30, name: "판교의 하루일과", category: "양식/기타", subcategory: "이탈리안 · 와인바", mood: "접대",
+    priceRange: "1인 2~5만원", shortAddr: "판교테크원타워 2F",
+    address: "경기 성남시 분당구 분당내곡로 131 판교테크원타워 2층 211호",
+    phone: "0507-1408-7559", hours: "매일 11:30~23:30 (BT 15:00~17:00, LO 22:30)",
+    signature: "꿀대구 스테이크, 파스타, 와인",
+    hasRoom: true, roomInfo: "개별룸 보유", corkage: "와인셀러 보유 (자체 판매)", parking: "테크원타워 주차장",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"꿀대구 스테이크",price:"26,000원"},{name:"하몽앤멜론",price:"19,000원"},{name:"트러플 크림 파스타",price:"22,000원"},{name:"와인 (병)",price:"67,000원~"}],
+    naverQuery: "판교 하루일과 이탈리안", catchTableId: null, googleQuery: "판교의+하루일과+이탈리안",
+    note: "와인셀러 보유. 고급스러운 분위기. 와인 모임에 적합."
+  },
+  {
+    id: 31, name: "텍사스로드하우스 판교점", category: "양식/기타", subcategory: "스테이크하우스", mood: "캐주얼",
+    priceRange: "1인 2~5만원", shortAddr: "현대백화점 판교 B1",
+    address: "경기 성남시 분당구 판교역로146번길 20 현대백화점 판교 지하1층",
+    phone: "0507-1351-1052", hours: "월~목 10:30~20:00, 금~일 10:30~21:00",
+    signature: "설로인 스테이크, 폭립",
+    hasRoom: false, roomInfo: "룸 없음 (오픈형 홀)", corkage: "불가", parking: "현대백화점 3시간 무료",
+    lat: 37.39280, lng: 127.11199,
+    menus: [{name:"설로인 스테이크 6oz",price:"21,900원"},{name:"설로인 스테이크 11oz",price:"32,900원"},{name:"폭립 하프랙",price:"29,900원"},{name:"치킨 시저 샐러드",price:"18,900원"}],
+    naverQuery: "판교 텍사스로드하우스", catchTableId: "texasroadhouse_pangyo", googleQuery: "텍사스로드하우스+판교+현대백화점",
+    note: "미국식 캐주얼 스테이크. 가성비 좋음. 주말 웨이팅."
+  },
+  {
+    id: 32, name: "크래버 대게나라 판교점", category: "양식/기타", subcategory: "대게 · 해산물", mood: "접대",
+    priceRange: "1인 4~9만원", shortAddr: "판교골드타워 2F",
+    address: "경기 성남시 분당구 판교역로 235 판교골드타워 2층",
+    phone: "031-698-0092", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
+    signature: "대게 코스, 킹크랩",
+    hasRoom: true, roomInfo: "개별 룸 보유, 단체 가능", corkage: "전화 문의", parking: "골드타워 지하주차 3시간 무료",
+    lat: 37.40180, lng: 127.11000,
+    menus: [{name:"대게 코스 A",price:"49,000원"},{name:"대게 코스 B",price:"69,000원"},{name:"킹크랩 코스",price:"89,000원"},{name:"랍스터 코스",price:"79,000원"}],
+    naverQuery: "판교 크래버 대게나라", catchTableId: null, googleQuery: "크래버+대게나라+판교",
+    note: "골드타워 2층. 룸 보유. 단체 회식·접대에 적합."
+  },
+  {
+    id: 33, name: "르메콩", category: "양식/기타", subcategory: "베트남 요리", mood: "캐주얼",
+    priceRange: "1인 1~1.5만원", shortAddr: "대왕판교로 670",
+    address: "경기 성남시 분당구 대왕판교로 670",
+    phone: "031-601-7778", hours: "평일 11:00~15:00 (점심만 영업)",
+    signature: "소고기 쌀국수, 나시고렝",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "불가", parking: "건물 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"소고기 쌀국수",price:"10,900원"},{name:"나시고렝",price:"11,900원"},{name:"분짜",price:"11,900원"},{name:"반미 세트",price:"10,900원"}],
+    naverQuery: "판교 르메콩 베트남", catchTableId: null, googleQuery: "르메콩+판교",
+    note: "점심만 운영. 직장인 점심 맛집."
+  },
+  {
+    id: 34, name: "더이탈리안클럽 테크원점", category: "양식/기타", subcategory: "이탈리안 코스", mood: "접대",
+    priceRange: "1인 4~5만원", shortAddr: "판교테크원타워",
+    address: "경기 성남시 분당구 분당내곡로 131 판교테크원타워",
+    phone: "0507-1345-2928", hours: "평일 11:30~21:30, 주말 ~21:00",
+    signature: "올데이세트(2인), 파스타, 코스",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "테크원타워 주차장",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"올데이세트 (2인)",price:"98,000원"},{name:"파스타",price:"22,000원~"},{name:"코스요리",price:"50,000원~"}],
+    naverQuery: "더이탈리안클럽 판교 테크원", catchTableId: "coresociety2021", googleQuery: "더이탈리안클럽+판교+테크원",
+    note: "판교역 1번 출구 앞. 캐치테이블 예약 가능."
+  },
+  {
+    id: 35, name: "집게집 판교 직영점", category: "양식/기타", subcategory: "대게 · 킹크랩", mood: "접대",
+    priceRange: "1인 8~11만원", shortAddr: "판교로25번길",
+    address: "경기 성남시 분당구 판교로25번길 6-2",
+    phone: "0507-1356-7833", hours: "매일 12:00~22:00 (LO 21:30)",
+    signature: "러시아 대게, 레드 킹크랩",
+    hasRoom: true, roomInfo: "소규모 룸 2실", corkage: "콜키지 프리", parking: "매장 앞 6대 무료",
+    lat: 37.39350, lng: 127.10400,
+    menus: [{name:"A급 러시아 대게 1kg",price:"84,000원"},{name:"A급 레드 킹크랩 1kg",price:"114,000원"},{name:"게내장볶음밥, 홍게라면 포함",price:""}],
+    naverQuery: "판교 집게집 대게", catchTableId: null, googleQuery: "집게집+판교+대게+킹크랩",
+    note: "콜키지 프리. 소규모 룸. 특별한 접대에 추천."
+  },
+  {
+    id: 36, name: "푸에르코 판교점", category: "양식/기타", subcategory: "이베리코 돼지 구이", mood: "회식",
+    priceRange: "1인 1.8~3만원", shortAddr: "그레이츠판교",
+    address: "경기 성남시 분당구 분당내곡로 117 그레이츠판교 201호",
+    phone: "전화문의 (캐치테이블)", hours: "11:30~22:00 (BT 14:00~17:00)",
+    signature: "이베리코 꽃목살, 갈비살, 삼겹살",
+    hasRoom: false, roomInfo: "단체석 있음", corkage: "콜키지 프리 (와인/양주)", parking: "그레이츠판교 주차장",
+    lat: 37.39350, lng: 127.10750,
+    menus: [{name:"이베리코 꽃목살",price:"18,000원"},{name:"이베리코 갈비살",price:"19,000원"},{name:"이베리코 삼겹살",price:"18,000원"},{name:"플루마 (한정)",price:"시세"}],
+    naverQuery: "판교 푸에르코 이베리코", catchTableId: "puercopangyo", googleQuery: "푸에르코+판교+이베리코",
+    note: "콜키지 프리(와인/양주). 캐치테이블 예약. 회식 추천."
+  },
+  {
+    id: 37, name: "정희 아브뉴프랑점", category: "한식", subcategory: "퓨전 한식 · 가정식", mood: "캐주얼",
+    priceRange: "1인 1.1~1.7만원", shortAddr: "아브뉴프랑 1F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 1층 150호",
+    phone: "0507-1442-7843", hours: "11:00~21:00 (평일 BT 15:00~17:00)",
+    signature: "강된장 케일 쌈밥, 고사리 크림 수제비",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"강된장 케일 쌈밥",price:"10,900원"},{name:"고사리 크림 수제비",price:"13,900원"},{name:"새우 감자전",price:"16,900원"}],
+    naverQuery: "판교 정희 아브뉴프랑", catchTableId: "jeonghee_pangyo", googleQuery: "정희+아브뉴프랑+판교",
+    note: "건강한 한식. 가벼운 점심 추천."
+  },
+  // ═══════ 추가 식당 (2차) ═══════
+  {
+    id: 38, name: "빈티지1988", category: "양식/기타", subcategory: "이탈리안 · 스테이크", mood: "회식",
+    priceRange: "1인 1.8~6.9만원", shortAddr: "H스퀘어 S동 1F",
+    address: "경기 성남시 분당구 판교역로 231 에이치스퀘어 에스동 101호",
+    phone: "0507-1387-1993", hours: "평일 11:00~22:00, 주말 11:30~21:00 (BT 14:30~17:30)",
+    signature: "대파 알리오올리오, 와규 꽃등심",
+    hasRoom: false, roomInfo: "룸 없음 (오픈키친)", corkage: "전화 문의", parking: "건물 내 무료 주차",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"대파 알리오올리오",price:"18,000원"},{name:"삼합 파스타",price:"26,000원"},{name:"찹스테이크 크림 파스타",price:"27,000원"},{name:"트러플 버섯크림 리조또",price:"22,000원"},{name:"와규 꽃등심",price:"69,000원"}],
+    naverQuery: "빈티지1988 판교 삼평동", catchTableId: "vintage1988", googleQuery: "빈티지1988+판교+삼평동",
+    note: "NHN에서 도보 1분. H스퀘어 1층. 점심 파스타 인기."
+  },
+  {
+    id: 39, name: "동청담", category: "중식", subcategory: "짜장 · 짬뽕", mood: "캐주얼",
+    priceRange: "1인 0.8~3.8만원", shortAddr: "판교역푸르지오시티",
+    address: "경기 성남시 분당구 대왕판교로606번길 45",
+    phone: "0507-1451-0264", hours: "평일 11:00~22:30 (BT 15:00~17:00), 주말 ~21:00",
+    signature: "유니짜장, 옛날짬뽕, 탕수육",
+    hasRoom: false, roomInfo: "단체석 있음", corkage: "해당 없음", parking: "무료 주차",
+    lat: 37.39350, lng: 127.11200,
+    menus: [{name:"유니짜장",price:"8,000원"},{name:"옛날짬뽕",price:"10,000원"},{name:"탕수육",price:"25,000원"},{name:"마파두부밥",price:"12,000원"},{name:"유산슬",price:"38,000원"}],
+    naverQuery: "판교 동청담 짜장", catchTableId: null, googleQuery: "동청담+판교+중식",
+    note: "가성비 중식. 직장인 점심 맛집."
+  },
+  {
+    id: 40, name: "우몽블랙 판교점", category: "한식", subcategory: "숙성 한우 · 오마카세", mood: "접대",
+    priceRange: "1인 3~10만원+", shortAddr: "알파리움타워 2동",
+    address: "경기 성남시 분당구 판교역로 145 알파리움타워 2동 111호",
+    phone: "네이버/캐치테이블 예약", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
+    signature: "숙성 특안심, 숙성 눈꽃등심, 런치 오마카세",
+    hasRoom: true, roomInfo: "모든 테이블 프라이빗 룸", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.39500, lng: 127.11080,
+    menus: [{name:"런치 오마카세 코스",price:"30,000원~50,000원"},{name:"디너 한우 구이 코스",price:"100,000원~"},{name:"숙성 특안심",price:"시세"},{name:"숙성 눈꽃등심",price:"시세"}],
+    naverQuery: "판교 우몽블랙 한우", catchTableId: "woomongblack", googleQuery: "우몽블랙+판교+한우",
+    note: "모든 테이블 프라이빗. VIP 접대에 최적."
+  },
+  {
+    id: 41, name: "흥도식당 판교점", category: "일식", subcategory: "수제 돈까스 · 카레", mood: "캐주얼",
+    priceRange: "1인 1.2~1.7만원", shortAddr: "테크원타워 2F",
+    address: "경기 성남시 분당구 분당내곡로 131 테크원타워 2층 12호",
+    phone: "031-601-7569", hours: "평일 11:20~21:00 (BT 15:00~17:30, 주말 휴무)",
+    signature: "흥도카츠, 로스카레",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "테크원타워 주차장",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"흥도카츠",price:"12,000원"},{name:"흑 상로스카츠",price:"17,000원"},{name:"히레카츠",price:"16,000원"},{name:"로스카레",price:"14,000원"}],
+    naverQuery: "판교 흥도식당 돈까스", catchTableId: null, googleQuery: "흥도식당+판교+돈까스",
+    note: "가성비 돈까스. 직장인 점심 인기. 주말 휴무."
+  },
+  {
+    id: 44, name: "카츠쇼쿠도우 판교점", category: "일식", subcategory: "프리미엄 돈카츠", mood: "캐주얼",
+    priceRange: "1인 1.5~2.5만원", shortAddr: "알파돔타워3 B1",
+    address: "경기 성남시 분당구 판교역로 152 알파돔타워3 지하1층 9호",
+    phone: "031-622-7134", hours: "매일 11:30~22:00",
+    signature: "로스카츠, 히레카츠 (블루리본 4년 연속)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "알파돔타워 지하주차",
+    lat: 37.39380, lng: 127.10950,
+    menus: [{name:"로스카츠 세트",price:"18,000원"},{name:"히레카츠 세트",price:"20,000원"},{name:"미니카레",price:"5,000원"}],
+    naverQuery: "판교 카츠쇼쿠도우", catchTableId: null, googleQuery: "카츠쇼쿠도우+판교+돈카츠",
+    note: "블루리본 4년 연속. 프리미엄 돈카츠."
+  },
+  {
+    id: 45, name: "사쿠라테이엔 판교본점", category: "일식", subcategory: "이자카야", mood: "회식",
+    priceRange: "1인 3~5만원", shortAddr: "판교타워 1F",
+    address: "경기 성남시 분당구 판교역로192번길 16 판교타워 1층",
+    phone: "전화문의", hours: "매일 17:00~01:00",
+    signature: "딱새우사시미+전골, 갈치회, 메로구이",
+    hasRoom: false, roomInfo: "룸 없음 (홀 좌석)", corkage: "전화 문의", parking: "건물 지하주차",
+    lat: 37.39420, lng: 127.11150,
+    menus: [{name:"딱새우사시미+전골",price:"40,000원"},{name:"갈치회+갈치튀김",price:"38,000원"},{name:"메로구이",price:"35,000원"},{name:"오꼬노미야끼",price:"18,000원"}],
+    naverQuery: "판교 사쿠라테이엔", catchTableId: null, googleQuery: "사쿠라테이엔+판교+이자카야",
+    note: "저녁~새벽 영업. 2차 회식에 적합."
+  },
+  {
+    id: 46, name: "이가네양꼬치 판교점", category: "중식", subcategory: "양꼬치 · 양갈비", mood: "회식",
+    priceRange: "1인 1.8~2.6만원", shortAddr: "KCC웰츠타워 B동",
+    address: "경기 성남시 분당구 삼평동 KCC웰츠타워 B동",
+    phone: "전화문의", hours: "매일 12:00~23:30",
+    signature: "양갈비, 등심꼬치, 왕꼬치",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "KCC웰츠타워 지하주차 3시간 무료",
+    lat: 37.40050, lng: 127.10850,
+    menus: [{name:"양갈비",price:"26,000원"},{name:"등심꼬치",price:"23,000원"},{name:"왕꼬치",price:"18,000원"},{name:"탕수육",price:"21,000원"}],
+    naverQuery: "판교 이가네양꼬치", catchTableId: null, googleQuery: "이가네양꼬치+판교",
+    note: "양꼬치+고량주 회식. 삼평동 위치."
+  },
+  {
+    id: 47, name: "매드포갈릭 판교점", category: "양식/기타", subcategory: "파스타 · 스테이크", mood: "회식",
+    priceRange: "1인 2.3~5만원", shortAddr: "라스트리트 2F",
+    address: "경기 성남시 분당구 대왕판교로606번길 10 라스트리트 1동 2층",
+    phone: "031-703-8920", hours: "매일 11:00~21:00 (LO 20:30)",
+    signature: "풀코스 매드 런치, 시그니처 스테이크",
+    hasRoom: false, roomInfo: "단체 이용 가능", corkage: "전화 문의", parking: "주차 가능",
+    lat: 37.39480, lng: 127.11050,
+    menus: [{name:"풀코스 매드 런치",price:"22,900원"},{name:"매드 글레이즈드 립",price:"34,900원"},{name:"시그니처 스테이크 세트",price:"115,000원"}],
+    naverQuery: "판교 매드포갈릭", catchTableId: null, googleQuery: "매드포갈릭+판교+라스트리트",
+    note: "런치 세트 가성비. 단체 회식 가능."
+  },
+  {
+    id: 48, name: "유방녕 현대백화점 판교점", category: "중식", subcategory: "짜장 · 짬뽕", mood: "캐주얼",
+    priceRange: "1인 1.2~2만원", shortAddr: "현대백화점 판교 5F",
+    address: "경기 성남시 분당구 판교역로146번길 20 현대백화점 판교 5층",
+    phone: "0507-1384-8299", hours: "월~목 10:30~20:00, 금~일 10:30~21:00",
+    signature: "유니짜장면, 전복삼선짬뽕",
+    hasRoom: false, roomInfo: "룸 없음 (대형 홀)", corkage: "해당 없음", parking: "현대백화점 주차장",
+    lat: 37.39280, lng: 127.11199,
+    menus: [{name:"유니짜장면",price:"11,500원"},{name:"전복삼선짬뽕",price:"14,500원"},{name:"새우볶음밥",price:"14,000원"},{name:"흑마늘 탕수육",price:"30,000원대"}],
+    naverQuery: "판교 유방녕 현대백화점", catchTableId: null, googleQuery: "유방녕+현대백화점+판교",
+    note: "백화점 내 중식. 쇼핑 겸 식사."
+  },
+  {
+    id: 49, name: "인디테이블 판교점", category: "양식/기타", subcategory: "인도 요리 · 커리", mood: "캐주얼",
+    priceRange: "1인 1.5~2.5만원", shortAddr: "아브뉴프랑 1F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 1층",
+    phone: "0507-1411-7034", hours: "평일 11:00~21:00, 주말 11:30~21:00 (BT 15:00~17:00)",
+    signature: "치킨 티카 마살라, 탄두리 램찹, 난",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "전화 문의", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"치킨 티카 마살라",price:"18,000원"},{name:"탄두리 램찹",price:"24,000원"},{name:"난",price:"4,000원"},{name:"런치 세트",price:"15,000원~"}],
+    naverQuery: "판교 인디테이블 인도", catchTableId: null, googleQuery: "인디테이블+판교+인도음식",
+    note: "판교 유일 정통 인도 레스토랑. 런치 세트 인기."
+  },
+  {
+    id: 50, name: "춘업순댓국", category: "한식", subcategory: "순댓국", mood: "캐주얼",
+    priceRange: "1인 0.8만원", shortAddr: "H스퀘어 B1",
+    address: "경기 성남시 분당구 판교역로 231 에이치스퀘어 B113호",
+    phone: "0507-1435-3660", hours: "평일 08:00~21:20 (BT 15:00~17:00, 주말 휴무)",
+    signature: "보통순댓국 + 즉석 솥밥",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "건물 주차 2시간",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"보통순댓국",price:"8,000원"},{name:"얼큰순댓국",price:"8,000원"},{name:"소고기순댓국",price:"8,000원"},{name:"솥밥 (주문 시 제공)",price:"포함"}],
+    naverQuery: "판교 춘업순댓국 H스퀘어", catchTableId: null, googleQuery: "춘업순댓국+판교+삼평동",
+    note: "NHN 도보 1분. 8천원 순댓국+솥밥. 아침 8시 오픈."
+  },
+  {
+    id: 51, name: "자연횟집", category: "일식", subcategory: "횟집 · 회정식", mood: "접대",
+    priceRange: "1인 1.2~9만원", shortAddr: "H스퀘어 N동",
+    address: "경기 성남시 분당구 판교역로 235 H스퀘어 N동 123호",
+    phone: "0507-1429-7914", hours: "평일 영업 (BT 14:30~16:00, 주말 휴무)",
+    signature: "회정식 런치/디너, 특정식",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"회덮밥",price:"12,000원"},{name:"물회",price:"13,000원"},{name:"회정식 런치",price:"35,000원"},{name:"회정식 디너",price:"40,000원"},{name:"특정식A",price:"65,000원"},{name:"특정식B",price:"90,000원"}],
+    naverQuery: "판교 자연횟집 H스퀘어", catchTableId: null, googleQuery: "자연횟집+판교+삼평동",
+    note: "NHN 도보 1분. H스퀘어. 회정식 접대에 적합. 주말 휴무."
+  },
+  {
+    id: 52, name: "돈블랑 판교점", category: "한식", subcategory: "삼겹살 전문", mood: "회식",
+    priceRange: "1인 1.7~2만원", shortAddr: "알파리움 1단지 1F",
+    address: "경기 성남시 분당구 대왕판교로606번길 10 알파리움 1단지 상가 1층",
+    phone: "031-703-7722", hours: "매일 11:30~22:00",
+    signature: "生삼겹살, 生목살 (직원이 직접 구워줌)",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "콜키지 프리", parking: "건물 주차장",
+    lat: 37.39500, lng: 127.11050,
+    menus: [{name:"아랫고기 (生삼겹살)",price:"17,000원"},{name:"윗고기 (生목살)",price:"17,000원"},{name:"항정살",price:"20,000원"}],
+    naverQuery: "판교 돈블랑 삼겹살", catchTableId: null, googleQuery: "돈블랑+판교+삼겹살",
+    note: "직원이 직접 구워줌. 콜키지 프리. 캐주얼 회식."
+  },
+  {
+    id: 53, name: "황제갈비 판교점", category: "한식", subcategory: "소갈비 전문", mood: "회식",
+    priceRange: "1인 3.3~4.8만원", shortAddr: "유스페이스 2A동",
+    address: "경기 성남시 분당구 대왕판교로 670 유스페이스 2A동 104~105호",
+    phone: "031-739-8688", hours: "평일 10:00~22:00 (BT 15:00~16:30, 주말 휴무)",
+    signature: "생갈비살+생토시살 세트",
+    hasRoom: false, roomInfo: "단체 가능", corkage: "전화 문의", parking: "유스페이스 주차장",
+    lat: 37.40100, lng: 127.10750,
+    menus: [{name:"2인세트 (생갈비살+생토시살)",price:"65,000원"},{name:"3번세트",price:"96,000원"},{name:"4인분 주문 시 추가 4인분 무료",price:""}],
+    naverQuery: "판교 황제갈비", catchTableId: null, googleQuery: "황제갈비+판교+삼평동",
+    note: "NHN 매우 가까움. 4인분 주문시 추가 4인분 무료. 주말 휴무."
+  },
+  {
+    id: 54, name: "진1926 판교점", category: "양식/기타", subcategory: "양고기 전문", mood: "회식",
+    priceRange: "1인 2.6~3만원", shortAddr: "판교역로192번길",
+    address: "경기 성남시 분당구 판교역로192번길 22 1층 101호",
+    phone: "031-707-0292", hours: "월~토 17:00~22:30 (일 휴무)",
+    signature: "양갈비, 양등심, 양살치살",
+    hasRoom: false, roomInfo: "단체 이용 가능", corkage: "전화 문의", parking: "주차 가능",
+    lat: 37.39420, lng: 127.11180,
+    menus: [{name:"양갈비 (220g)",price:"30,000원"},{name:"양등심 (150g)",price:"26,000원"},{name:"양살치살 (130g)",price:"26,000원"},{name:"오뎅탕",price:"22,000원"}],
+    naverQuery: "판교 진1926 양고기", catchTableId: "jin1926_pg", googleQuery: "진1926+판교+양고기",
+    note: "양고기 전문. 저녁 영업만. 일요일 휴무."
+  },
+  {
+    id: 55, name: "마키노차야 판교점", category: "양식/기타", subcategory: "해산물 뷔페 (120종)", mood: "회식",
+    priceRange: "1인 5.5만원", shortAddr: "라스트리트 B1",
+    address: "경기 성남시 분당구 판교역로 145 알파리움타워 2동 라스트리트 B1층",
+    phone: "02-565-1116", hours: "평일 11:30~21:00 (BT 15:00~18:00), 주말 11:00~21:00",
+    signature: "사시미, 스시, 한중일양 120종 뷔페",
+    hasRoom: false, roomInfo: "룸 없음 (대형 홀)", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.39500, lng: 127.11080,
+    menus: [{name:"런치 뷔페 (성인)",price:"55,000원"},{name:"네이버 예약 시 5% 할인",price:""},{name:"디너 뷔페",price:"55,000원"}],
+    naverQuery: "판교 마키노차야 뷔페", catchTableId: "makinochayapg", googleQuery: "마키노차야+판교+뷔페",
+    note: "120종 해산물 뷔페. 대규모 단체 회식에 적합."
+  },
+  {
+    id: 56, name: "조재벌식당", category: "한식", subcategory: "솥뚜껑 삼겹살", mood: "캐주얼",
+    priceRange: "1인 1.1~1.8만원", shortAddr: "디테라스",
+    address: "경기 성남시 분당구 판교로319번길 13 디테라스 B105호",
+    phone: "0507-1317-6271", hours: "매일 11:00~22:00",
+    signature: "솥뚜껑 삼겹살, 목살, 부대찌개",
+    hasRoom: false, roomInfo: "단체 이용 가능", corkage: "전화 문의", parking: "주차 가능",
+    lat: 37.39600, lng: 127.10800,
+    menus: [{name:"삼겹살",price:"17,000원"},{name:"목살",price:"17,000원"},{name:"항정살",price:"18,000원"},{name:"부대찌개",price:"11,000원"},{name:"김치찌개 (고기 주문시 서비스)",price:""}],
+    naverQuery: "판교 조재벌식당", catchTableId: null, googleQuery: "조재벌식당+판교",
+    note: "가성비 삼겹살. 고기 주문 시 김치찌개 서비스."
+  },
+  {
+    id: 57, name: "홀썸치킨", category: "양식/기타", subcategory: "프리미엄 치킨 · 치맥", mood: "캐주얼",
+    priceRange: "1인 1.5~2만원", shortAddr: "푸르지오월드마크 1F",
+    address: "경기 성남시 분당구 대왕판교로606번길 58 판교푸르지오월드마크 1층 113호",
+    phone: "031-8016-6400", hours: "평일 11:30~24:00, 주말 14:30~24:00",
+    signature: "크리스피반반, 파새치킨 (무항생제·무MSG)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "건물 주차장",
+    lat: 37.39350, lng: 127.11300,
+    menus: [{name:"크리스피반반",price:"31,000원"},{name:"파새 치킨",price:"38,000원"},{name:"테라/카스 생맥주",price:"6,000원"}],
+    naverQuery: "판교 홀썸치킨", catchTableId: null, googleQuery: "홀썸치킨+판교",
+    note: "무항생제 프리미엄 치킨. 치맥 회식·2차에 적합."
+  },
+  // ═══════ 추가 식당 (3차 - NHN 근처) ═══════
+  {
+    id: 58, name: "울프스덴", category: "양식/기타", subcategory: "이탈리안 · 스테이크 · 와인", mood: "접대",
+    priceRange: "1인 3~6만원", shortAddr: "유스페이스1 215호",
+    address: "경기 성남시 분당구 대왕판교로 660 유스페이스1 제 215호",
+    phone: "전화문의", hours: "매일 11:00~23:00",
+    signature: "등심 스테이크, 리조또, 뇨끼",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "유스페이스 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"등심 스테이크",price:"45,000원~"},{name:"리조또",price:"22,000원~"},{name:"뇨끼",price:"20,000원~"},{name:"와인",price:"50,000원~"}],
+    naverQuery: "판교 울프스덴 유스페이스", catchTableId: "wolfsden", googleQuery: "울프스덴+판교+유스페이스",
+    note: "호텔 퀄리티 이탈리안. 캐치테이블 예약. NHN 도보 3분."
+  },
+  {
+    id: 59, name: "평가옥", category: "한식", subcategory: "평양냉면 · 온반", mood: "캐주얼",
+    priceRange: "1인 1.2~1.5만원", shortAddr: "유스페이스1",
+    address: "경기 성남시 분당구 대왕판교로 660 유스페이스1",
+    phone: "전화문의", hours: "매일 11:00~21:30",
+    signature: "평양냉면, 온반, 이북만두",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "유스페이스 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"평양냉면",price:"12,000원"},{name:"온반",price:"12,000원"},{name:"이북만두",price:"12,000원"},{name:"수육",price:"35,000원"}],
+    naverQuery: "판교 평가옥 유스페이스", catchTableId: null, googleQuery: "평가옥+판교+유스페이스",
+    note: "NHN 도보 3분. 깔끔한 냉면집. 직장인 점심 인기."
+  },
+  {
+    id: 60, name: "서호돈가스", category: "일식", subcategory: "돈카츠", mood: "캐주얼",
+    priceRange: "1인 1~1.5만원", shortAddr: "H스퀘어 S동 1F",
+    address: "경기 성남시 분당구 판교역로 231 에이치스퀘어 S동 1층",
+    phone: "전화문의", hours: "평일 11:00~21:00",
+    signature: "히레카츠, 로스카츠",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "H스퀘어 주차장",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"히레카츠",price:"13,000원"},{name:"로스카츠",price:"11,000원"},{name:"치즈카츠",price:"13,000원"}],
+    naverQuery: "판교 서호돈가스 H스퀘어", catchTableId: null, googleQuery: "서호돈가스+판교+삼평동",
+    note: "NHN 도보 1분. H스퀘어. 가성비 돈카츠."
+  },
+  {
+    id: 61, name: "일상화식", category: "일식", subcategory: "카이센동 · 일식정식", mood: "캐주얼",
+    priceRange: "1인 1.2~1.8만원", shortAddr: "유스페이스2 B동",
+    address: "경기 성남시 분당구 삼평동 유스페이스2 B동 226호",
+    phone: "전화문의", hours: "평일 11:00~21:30 (BT 14:00~17:00, 주말 휴무)",
+    signature: "카이센동 (해산물 덮밥)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "유스페이스 2시간 무료",
+    lat: 37.40100, lng: 127.10550,
+    menus: [{name:"카이센동",price:"15,000원"},{name:"연어동",price:"14,000원"},{name:"돈카츠 정식",price:"13,000원"}],
+    naverQuery: "판교 일상화식 유스페이스", catchTableId: null, googleQuery: "일상화식+판교+삼평동",
+    note: "NHN 도보 3분. 유스페이스2. 평점 4.6. 주말 휴무."
+  },
+  {
+    id: 62, name: "감성쪽갈비 판교점", category: "한식", subcategory: "숯불 쪽갈비", mood: "회식",
+    priceRange: "1인 2~3만원", shortAddr: "유스페이스1 A동",
+    address: "경기 성남시 분당구 대왕판교로 660 유스페이스1 A동 211호",
+    phone: "전화문의", hours: "매일 16:00~24:00",
+    signature: "숯불 쪽갈비",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "유스페이스 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"쪽갈비 1인분",price:"20,000원~"},{name:"냉면",price:"8,000원"}],
+    naverQuery: "판교 감성쪽갈비 유스페이스", catchTableId: null, googleQuery: "감성쪽갈비+판교",
+    note: "저녁 영업. NHN 도보 3분. 회식에 적합."
+  },
+  {
+    id: 63, name: "주유별장 판교점", category: "한식", subcategory: "퓨전 한식 · 술집", mood: "회식",
+    priceRange: "1인 3~5만원", shortAddr: "삼평동 664 2F",
+    address: "경기 성남시 분당구 삼평동 664 2층",
+    phone: "031-8061-0720", hours: "매일 영업 (화 휴무)",
+    signature: "통오징어숙회, 닭불고기 깻잎날치알쌈",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "인근 주차장",
+    lat: 37.40050, lng: 127.10600,
+    menus: [{name:"통오징어숙회",price:"35,000원"},{name:"닭불고기 깻잎날치알쌈",price:"28,000원"},{name:"도토리파스타샐러드",price:"18,000원"}],
+    naverQuery: "판교 주유별장 삼평동", catchTableId: null, googleQuery: "주유별장+판교",
+    note: "퓨전 한식 술집. NHN 근처. 회식 2차에 적합. 화요일 휴무."
+  },
+  {
+    id: 64, name: "듬박이찌개 판교점", category: "한식", subcategory: "김치찌개", mood: "캐주얼",
+    priceRange: "1인 0.8~1만원", shortAddr: "삼평동 680 1F",
+    address: "경기 성남시 분당구 삼평동 680 1층 128호",
+    phone: "031-696-7575", hours: "매일 11:00~23:00",
+    signature: "듬박이찌개 (국내산 돼지 김치찌개)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "건물 주차장",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"듬박이찌개",price:"8,000원"},{name:"순두부찌개",price:"8,000원"},{name:"제육볶음",price:"10,000원"}],
+    naverQuery: "판교 듬박이찌개 삼평동", catchTableId: null, googleQuery: "듬박이찌개+판교+삼평동",
+    note: "NHN 도보 1분. 8천원 김치찌개. 든든한 한끼."
+  },
+  {
+    id: 65, name: "야키토리 화련 판교", category: "일식", subcategory: "야키토리 · 이자카야", mood: "회식",
+    priceRange: "1인 3~5만원", shortAddr: "삼평동",
+    address: "경기 성남시 분당구 삼평동",
+    phone: "전화문의 (캐치테이블)", hours: "저녁 영업",
+    signature: "프리미엄 야키토리 코스",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "인근 주차장",
+    lat: 37.40050, lng: 127.10700,
+    menus: [{name:"야키토리 코스",price:"35,000원~"},{name:"단품 꼬치",price:"4,000원~"}],
+    naverQuery: "판교 야키토리 화련", catchTableId: "yakitori_hwaryeon", googleQuery: "야키토리+화련+판교",
+    note: "프리미엄 야키토리. 캐치테이블 예약. 회식 추천."
+  },
+  {
+    id: 66, name: "매일식당", category: "양식/기타", subcategory: "수제돈까스 · 함박", mood: "캐주얼",
+    priceRange: "1인 1.2~1.8만원", shortAddr: "골드타워 1F",
+    address: "경기 성남시 분당구 판교역로192번길 14-2 골드타워 1층",
+    phone: "전화문의", hours: "평일 11:10~01:30, 주말 ~21:00 (BT 15:00~17:00)",
+    signature: "수제돈까스, 함박스테이크",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "골드타워 주차장",
+    lat: 37.40180, lng: 127.11000,
+    menus: [{name:"수제돈까스",price:"13,000원"},{name:"함박스테이크",price:"14,000원"},{name:"오므라이스",price:"12,000원"}],
+    naverQuery: "판교 매일식당 골드타워", catchTableId: null, googleQuery: "매일식당+판교+골드타워",
+    note: "레트로 양식. 평일 새벽 1:30까지 영업. 야근 후 식사 가능."
+  }
+];
+
+var categories = ["전체", "⭐ 즐겨찾기", "한식", "중식", "일식", "양식/기타"];
+
+var favorites = JSON.parse(localStorage.getItem("favRestaurants") || "[]");
+function isFav(id) { return favorites.indexOf(id) !== -1; }
+function toggleFav(id, e) {
+  if (e) { e.stopPropagation(); }
+  var idx = favorites.indexOf(id);
+  if (idx === -1) favorites.push(id); else favorites.splice(idx, 1);
+  localStorage.setItem("favRestaurants", JSON.stringify(favorites));
+  renderList();
+  var openDetail = document.getElementById("overlay").classList.contains("active");
+  if (openDetail) { openDetailView(id); }
+}
+var distanceFilters = [
+  { label: "전체", max: 999 },
+  { label: "500m 이내", max: 0.5 },
+  { label: "1km 이내", max: 1 },
+  { label: "3km 이내", max: 3 }
+];
+var currentCategory = "전체";
+var currentMaxDistance = 999;
+
+function calcDistances() {
+  var b = bases[currentBase];
+  restaurants.forEach(function(r) {
+    r.distance = getDistance(b.lat, b.lng, r.lat, r.lng);
+    r.distanceText = r.distance < 1
+      ? (r.distance * 1000).toFixed(0) + 'm'
+      : r.distance.toFixed(1) + 'km';
+  });
+}
+
+function changeBase() {
+  currentBase = document.getElementById("baseSelect").value;
+  calcDistances();
+  renderList();
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = categories.map(function(cat) {
+    return '<div class="tab ' + (cat === currentCategory ? 'active' : '') + '" onclick="selectCategory(\'' + cat + '\')">' + cat + '</div>';
+  }).join("");
+}
+
+function selectCategory(cat) {
+  currentCategory = cat;
+  renderTabs();
+  renderList();
+}
+
+function renderDistanceFilter() {
+  document.getElementById("filterBar").innerHTML = distanceFilters.map(function(f) {
+    return '<div class="filter-chip ' + (f.max === currentMaxDistance ? 'active' : '') + '" onclick="selectDistance(' + f.max + ')">' + f.label + '</div>';
+  }).join("");
+}
+
+function selectDistance(max) {
+  currentMaxDistance = max;
+  renderDistanceFilter();
+  renderList();
+}
+
+function renderList() {
+  var listEl = document.getElementById("list");
+  var filtered = restaurants.filter(function(r) {
+    var catMatch = currentCategory === "전체" || r.category === currentCategory || (currentCategory === "⭐ 즐겨찾기" && isFav(r.id));
+    if (currentCategory === "⭐ 즐겨찾기") return isFav(r.id) && r.distance <= currentMaxDistance;
+    return catMatch && r.distance <= currentMaxDistance;
+  });
+  filtered.sort(function(a, b) { return a.distance - b.distance; });
+
+  document.getElementById("resultCount").textContent = bases[currentBase].name + " 기준 · " + filtered.length + "개 식당";
+
+  if (filtered.length === 0) {
+    var emptyMsg = currentCategory === "⭐ 즐겨찾기" ? '즐겨찾기한 식당이 없습니다.<br><span style="font-size:12px;">식당 카드의 ☆ 버튼을 눌러 추가하세요.</span>' : '해당 조건에 맞는 식당이 없습니다.';
+    listEl.innerHTML = '<div class="empty-state">' + emptyMsg + '</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(function(r) {
+    var b = '';
+    if (r.hasRoom) b += '<span class="badge badge-room">룸</span>';
+    if (r.corkage === '콜키지 프리') b += '<span class="badge badge-corkage">콜키지 프리</span>';
+    else if (r.corkage === '1병 무료') b += '<span class="badge badge-corkage">콜키지 1병 무료</span>';
+    if (r.parking && r.parking !== '불가' && r.parking !== '불가 (백화점 내)') b += '<span class="badge badge-parking">주차</span>';
+    if (r.catchTableId) b += '<span class="badge badge-catchtable">캐치테이블</span>';
+    if (r.mood === '접대') b += '<span class="badge badge-formal">접대</span>';
+    else if (r.mood === '회식') b += '<span class="badge badge-casual">회식</span>';
+
+    var star = isFav(r.id) ? '★' : '☆';
+    return '<div class="card" onclick="openDetail(' + r.id + ')">' +
+      '<div class="card-body">' +
+        '<div class="card-top">' +
+          '<div class="card-title-area">' +
+            '<div class="card-name-row"><button class="fav-btn' + (isFav(r.id) ? ' active' : '') + '" onclick="toggleFav(' + r.id + ',event)" style="color:' + (isFav(r.id) ? '#f0c040' : '#555') + '">' + star + '</button><span class="card-name">' + r.name + '</span><span class="card-distance">' + r.distanceText + '</span></div>' +
+            '<div class="card-category">' + r.subcategory + '</div>' +
+          '</div>' +
+          '<div class="card-price">' + r.priceRange + '</div>' +
+        '</div>' +
+        '<div class="card-addr">' + (r.shortAddr || '') + '</div>' +
+        '<div class="card-menu">대표 : ' + r.signature + '</div>' +
+        '<div class="badges">' + b + '</div>' +
+      '</div></div>';
+  }).join("");
+}
+
+function openDetail(id) { openDetailView(id); }
+function openDetailView(id) {
+  var r = restaurants.find(function(x) { return x.id === id; });
+  if (!r) return;
+  var nUrl = 'https://map.naver.com/v5/search/' + encodeURIComponent(r.naverQuery);
+  var gUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(r.name + ' ' + r.address);
+  var cUrl = r.catchTableId ? 'https://app.catchtable.co.kr/ct/shop/' + r.catchTableId : 'https://app.catchtable.co.kr/ct/search?keyword=' + encodeURIComponent(r.name + ' 판교');
+
+  var menuRows = r.menus.map(function(m) { return '<tr><td>' + m.name + '</td><td>' + m.price + '</td></tr>'; }).join("");
+  var badges = '';
+  if (r.hasRoom) badges += '<span class="badge badge-room">룸</span>';
+  if (r.corkage === '콜키지 프리') badges += '<span class="badge badge-corkage">콜키지 프리</span>';
+  else if (r.corkage === '1병 무료') badges += '<span class="badge badge-corkage">콜키지 1병 무료</span>';
+  if (r.parking && r.parking !== '불가') badges += '<span class="badge badge-parking">주차</span>';
+  if (r.mood === '접대') badges += '<span class="badge badge-formal">접대</span>';
+  else if (r.mood === '회식') badges += '<span class="badge badge-casual">회식</span>';
+
+  document.getElementById("detail").innerHTML =
+    '<div class="detail-header">' +
+      '<div class="detail-handle"></div>' +
+      '<button class="close-btn" onclick="closeDetail()">&times;</button>' +
+      '<div class="detail-name"><button class="fav-btn" onclick="toggleFav(' + r.id + ',event)" style="color:' + (isFav(r.id) ? '#f0c040' : '#555') + ';font-size:24px;vertical-align:middle;margin-right:4px;">' + (isFav(r.id) ? '★' : '☆') + '</button>' + r.name + ' <span style="font-size:12px;color:var(--primary);font-weight:700;">' + r.distanceText + '</span></div>' +
+      '<div class="detail-sub">' + r.subcategory + ' · ' + r.priceRange + '</div>' +
+      '<div class="detail-badges">' + badges + '</div>' +
+    '</div>' +
+    '<div class="reservation-box">' +
+      '<h3>예약 안내</h3>' +
+      '<a class="phone" href="tel:' + r.phone + '">' + r.phone + '</a>' +
+      '<div class="reservation-links">' +
+        '<a class="link-naver" href="' + nUrl + '" target="_blank">📍 네이버 지도</a>' +
+        '<a class="link-catchtable" href="' + cUrl + '" target="_blank">' + (r.catchTableId ? '🔖 캐치테이블 예약' : '🔍 캐치테이블') + '</a>' +
+        '<a class="link-google" href="' + gUrl + '" target="_blank">📍 Google 지도</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section"><h4>기본 정보</h4>' +
+      '<div class="info-grid">' +
+        '<span class="info-label">주소</span><span>' + r.address + '</span>' +
+        '<span class="info-label">영업시간</span><span>' + r.hours + '</span>' +
+        '<span class="info-label">주차</span><span>' + r.parking + '</span>' +
+        '<span class="info-label">룸</span><span>' + r.roomInfo + '</span>' +
+        '<span class="info-label">콜키지</span><span>' + r.corkage + '</span>' +
+      '</div></div>' +
+    '<div class="detail-section"><h4>메뉴 & 가격</h4><table class="menu-table">' + menuRows + '</table></div>' +
+    (r.note ? '<div class="detail-section"><h4>참고사항</h4><p class="note-text">' + r.note + '</p></div>' : '') +
+    '<div class="footer-text">가격 및 메뉴는 변동될 수 있습니다. 방문 전 전화 확인을 권장합니다.</div>';
+
+  document.getElementById("overlay").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetail(e) {
+  if (e && e.target !== document.getElementById("overlay")) return;
+  document.getElementById("overlay").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeDetail(); });
+
+calcDistances();
+renderTabs();
+renderDistanceFilter();
+renderList();
+</script>
+</body>
+</html>
