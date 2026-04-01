@@ -1014,11 +1014,9 @@ function renderList() {
             '<div class="card-name-row"><button class="fav-btn' + (isFav(r.id) ? ' active' : '') + '" onclick="toggleFav(' + r.id + ',event)" style="color:' + (isFav(r.id) ? '#f0c040' : '#555') + '">' + star + '</button><span class="card-name">' + r.name + '</span><span class="card-distance">' + r.distanceText + '</span></div>' +
             '<div class="card-category">' + r.subcategory + '</div>' +
           '</div>' +
-          '<div class="card-price">' + r.priceRange + '</div>' +
         '</div>' +
         '<div class="card-addr">' + (r.shortAddr || '') + '</div>' +
-        '<div class="card-menu">대표 : ' + r.signature + '</div>' +
-        '<div class="badges">' + b + '</div>' +
+        '<div class="badges" style="margin-top:10px;">' + b + '</div>' +
       '</div></div>';
   }).join("");
 }
