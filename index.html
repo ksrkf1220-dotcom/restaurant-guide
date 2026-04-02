@@ -60,6 +60,7 @@
   .badge-catchtable { background: rgba(220,130,160,0.12); color: #d88aa0; border: 1px solid rgba(220,130,160,0.2); }
   .badge-formal { background: rgba(201,169,110,0.15); color: #c9a96e; border: 1px solid rgba(201,169,110,0.3); }
   .badge-casual { background: rgba(120,180,220,0.12); color: #7ab4dc; border: 1px solid rgba(120,180,220,0.2); }
+  .badge-group { background: rgba(180,120,220,0.12); color: #b080d8; border: 1px solid rgba(180,120,220,0.25); }
   .badge-fav { background: rgba(255,215,0,0.12); color: #f0c040; border: 1px solid rgba(255,215,0,0.25); }
 
   .fav-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 2px 4px; line-height: 1; transition: transform 0.2s; flex-shrink: 0; }
@@ -181,7 +182,7 @@ var restaurants = [
     note: "주중 런치 10%↓, 디너 20%↓. 주말 한우구이류 50%↓."
   },
   {
-    id: 3, name: "한와담 판교점", category: "한식", subcategory: "한우 · 가정식", mood: "회식",
+    id: 3, name: "한와담 판교점", category: "한식", subcategory: "한우 · 가정식", mood: "단체",
     priceRange: "1인 1.5~6만원", shortAddr: "알파돔타워 1F",
     address: "경기 성남시 분당구 판교역로 152 알파돔타워 6차 1층",
     phone: "0507-1316-0582", hours: "매일 11:00~22:00 (BT 15:00~17:00)",
@@ -193,7 +194,7 @@ var restaurants = [
     note: "콜키지 프리. 대형 룸(최대 30명) 보유. 회식·단체모임 추천."
   },
   {
-    id: 4, name: "해우리 판교점", category: "한식", subcategory: "한정식 · 생선구이", mood: "접대",
+    id: 4, name: "해우리 판교점", category: "한식", subcategory: "한정식 · 생선구이", mood: "단체",
     priceRange: "1인 2.5~5만원", shortAddr: "판교알파돔시티 2동 B1",
     address: "경기 성남시 분당구 판교역로 145 판교알파돔시티 2동 지하1층",
     phone: "031-701-4997", hours: "매일 11:30~22:00 (BT 15:00~17:00)",
@@ -435,7 +436,7 @@ var restaurants = [
     note: "가격대비 푸짐. 캐치테이블 예약 추천. 워크인 어려움."
   },
   {
-    id: 25, name: "도원참치 판교본점", category: "일식", subcategory: "참치회 무한리필", mood: "회식",
+    id: 25, name: "도원참치 판교본점", category: "일식", subcategory: "참치회 무한리필", mood: "단체",
     priceRange: "1인 5.9만원", shortAddr: "판교골드타워 2F",
     address: "경기 성남시 분당구 판교역로192번길 14-2 골드타워 2층",
     phone: "031-8016-4588", hours: "월~금 11:00~23:00, 토 ~22:00 (일 휴무)",
@@ -761,7 +762,7 @@ var restaurants = [
     note: "양고기 전문. 저녁 영업만. 일요일 휴무."
   },
   {
-    id: 55, name: "마키노차야 판교점", category: "양식/기타", subcategory: "해산물 뷔페 (120종)", mood: "회식",
+    id: 55, name: "마키노차야 판교점", category: "양식/기타", subcategory: "해산물 뷔페 (120종)", mood: "단체",
     priceRange: "1인 5.5만원", shortAddr: "라스트리트 B1",
     address: "경기 성남시 분당구 판교역로 145 알파리움타워 2동 라스트리트 B1층",
     phone: "02-565-1116", hours: "평일 11:30~21:00 (BT 15:00~18:00), 주말 11:00~21:00",
@@ -904,6 +905,223 @@ var restaurants = [
     menus: [{name:"수제돈까스",price:"13,000원"},{name:"함박스테이크",price:"14,000원"},{name:"오므라이스",price:"12,000원"}],
     naverQuery: "판교 매일식당 골드타워", catchTableId: null, googleQuery: "매일식당+판교+골드타워",
     note: "레트로 양식. 평일 새벽 1:30까지 영업. 야근 후 식사 가능."
+  },
+  // ═══════ 추가 식당 (4차 - 삼평동 집중) ═══════
+  {
+    id: 67, name: "평가옥", category: "한식", subcategory: "평양냉면 · 온반", mood: "캐주얼",
+    priceRange: "1인 1.3~1.6만원", shortAddr: "유스페이스1",
+    address: "경기 성남시 분당구 대왕판교로 660 유스페이스1",
+    phone: "031-724-2566", hours: "매일 11:00~21:30",
+    signature: "평양냉면, 토종닭 온반, 녹두지짐",
+    hasRoom: false, roomInfo: "넓은 매장", corkage: "전화 문의", parking: "유스페이스 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"평양냉면",price:"13,000원"},{name:"토종닭 온반",price:"13,000원"},{name:"녹두지짐",price:"15,000원"},{name:"만두전골",price:"시세"}],
+    naverQuery: "판교 평가옥 냉면", catchTableId: null, googleQuery: "평가옥+판교+유스페이스",
+    note: "유스페이스 내 평양냉면. 깔끔한 가정식."
+  },
+  {
+    id: 68, name: "서호돈가스", category: "일식", subcategory: "수제 돈가스", mood: "캐주얼",
+    priceRange: "1인 1.2~1.6만원", shortAddr: "H스퀘어 S동",
+    address: "경기 성남시 분당구 판교역로 231 H스퀘어 S동 124호",
+    phone: "0507-1432-3630", hours: "평일 11:00~21:00 (BT 14:30~17:00), 토 ~15:00 (일 휴무)",
+    signature: "로스가스, 히레가스, 에비후라이",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "H스퀘어 주차",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"로스가스",price:"12,000원"},{name:"히레가스",price:"13,000원"},{name:"서호가스",price:"16,000원"},{name:"에비후라이",price:"15,000원"}],
+    naverQuery: "판교 서호돈가스 H스퀘어", catchTableId: null, googleQuery: "서호돈가스+판교+H스퀘어",
+    note: "NHN 도보 1분. H스퀘어. 가성비 돈가스."
+  },
+  {
+    id: 69, name: "커먼키친", category: "양식/기타", subcategory: "다이닝펍 · 함박", mood: "캐주얼",
+    priceRange: "1인 1.5~2만원", shortAddr: "H스퀘어 N동 B1",
+    address: "경기 성남시 분당구 판교역로 235 H스퀘어 N동 B107",
+    phone: "전화문의", hours: "평일 영업 (점심 웨이팅 많음)",
+    signature: "카레 함박정식, 시래기 된장 파스타",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "H스퀘어 주차",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"카레 함박정식",price:"15,000원"},{name:"시래기 된장 파스타",price:"16,000원"},{name:"브라운 함박정식",price:"15,000원"}],
+    naverQuery: "판교 커먼키친 H스퀘어", catchTableId: null, googleQuery: "커먼키친+판교+H스퀘어",
+    note: "NHN 도보 1분. 점심 웨이팅 인기."
+  },
+  {
+    id: 70, name: "일상화식", category: "일식", subcategory: "일본 가정식 · 카이센동", mood: "캐주얼",
+    priceRange: "1인 1~1.7만원", shortAddr: "유스페이스2 B동",
+    address: "경기 성남시 분당구 대왕판교로 670 유스페이스2 B동 226호",
+    phone: "031-696-0317", hours: "평일 11:00~21:30 (BT 14:00~17:00, 주말 휴무)",
+    signature: "카이센동, 카라이규동, 커리돈카츠",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "유스페이스 2시간 무료",
+    lat: 37.40100, lng: 127.10750,
+    menus: [{name:"카이센동",price:"17,000원"},{name:"카라이규동",price:"10,000원"},{name:"커리돈카츠",price:"11,500원"}],
+    naverQuery: "판교 일상화식 유스페이스", catchTableId: null, googleQuery: "일상화식+판교+유스페이스",
+    note: "유스페이스2. 가성비 일본 가정식. 주말 휴무."
+  },
+  {
+    id: 71, name: "왕스덕", category: "중식", subcategory: "북경오리 · 해물", mood: "접대",
+    priceRange: "1인 1.4~14만원", shortAddr: "NS별관 B1",
+    address: "경기 성남시 분당구 대왕판교로645번길 36 NS별관 B1층",
+    phone: "0507-1303-8517", hours: "매일 11:00~21:30 (BT 15:00~17:00)",
+    signature: "베이징덕, 삼산해물누룽지탕, 아몬드크림새우",
+    hasRoom: false, roomInfo: "예약 필수 (확인 필요)", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.40100, lng: 127.10550,
+    menus: [{name:"베이징덕",price:"140,000원"},{name:"삼산해물누룽지탕",price:"45,000원"},{name:"아몬드크림새우",price:"40,000원"},{name:"탕수육 (소)",price:"29,000원"},{name:"X.O게살볶음밥",price:"14,000원"}],
+    naverQuery: "판교 왕스덕 북경오리", catchTableId: null, googleQuery: "왕스덕+판교+북경오리",
+    note: "NHN 매우 가까움. NS별관. 베이징덕 접대 추천."
+  },
+  {
+    id: 72, name: "골드피쉬 얌차하우스", category: "중식", subcategory: "딤섬 · 소룡포", mood: "캐주얼",
+    priceRange: "1인 1.5~4만원", shortAddr: "아브뉴프랑 1F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 1층",
+    phone: "0507-1327-5266", hours: "매일 11:30~21:45 (BT 14:00~17:30)",
+    signature: "소룡포, 구채교, 새우딤섬",
+    hasRoom: false, roomInfo: "단체 가능 (매장 문의)", corkage: "전화 문의", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"소룡포",price:"15,000원"},{name:"구채교",price:"12,000원"},{name:"새우딤섬",price:"14,000원"},{name:"마파두부",price:"18,000원"}],
+    naverQuery: "판교 골드피쉬얌차하우스", catchTableId: null, googleQuery: "골드피쉬+얌차하우스+판교",
+    note: "아브뉴프랑 딤섬 전문. 단체 가능."
+  },
+  {
+    id: 73, name: "규카츠정 판교점", category: "일식", subcategory: "규카츠 · 텐동", mood: "캐주얼",
+    priceRange: "1인 1.2~1.6만원", shortAddr: "H스퀘어 S동 1F",
+    address: "경기 성남시 분당구 판교역로 231 H스퀘어 S동 1층 115호",
+    phone: "070-4323-6201", hours: "11:00~15:00/17:00~21:00 (일 휴무)",
+    signature: "규카츠정식, 타마고텐동, 규카츠카레",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "H스퀘어 주차",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"규카츠정식",price:"14,000원"},{name:"규카츠 타마고텐동정식",price:"15,000원"},{name:"규카츠 카레정식",price:"16,000원"},{name:"마제타마고텐동",price:"12,000원"}],
+    naverQuery: "판교 규카츠정 H스퀘어", catchTableId: null, googleQuery: "규카츠정+판교+H스퀘어",
+    note: "NHN 도보 1분. H스퀘어. 가성비 규카츠."
+  },
+  {
+    id: 74, name: "채선당플러스 판교역점", category: "한식", subcategory: "샤브샤브 · 뷔페", mood: "단체",
+    priceRange: "1인 2~2.7만원", shortAddr: "SG리슈빌 3F",
+    address: "경기 성남시 분당구 대왕판교로606번길 47 SG리슈빌 3층",
+    phone: "031-8017-3341", hours: "매일 11:30~22:00 (BT 15:30~17:30, 주말 BT 없음)",
+    signature: "스페셜소고기 샤브샤브 + 샐러드바",
+    hasRoom: true, roomInfo: "개별룸 보유 (20~30명 수용)", corkage: "전화 문의", parking: "건물 주차장",
+    lat: 37.39300, lng: 127.11150,
+    menus: [{name:"스페셜소고기샤브 (평일점심)",price:"19,900원"},{name:"스페셜소고기샤브 (저녁)",price:"23,500원"},{name:"한우샤브 (저녁)",price:"26,900원"}],
+    naverQuery: "판교 채선당플러스", catchTableId: null, googleQuery: "채선당플러스+판교역점",
+    note: "개별룸 20~30명. 샤브샤브+샐러드바. 대규모 단체 회식 추천."
+  },
+  {
+    id: 75, name: "빕스 판교점", category: "양식/기타", subcategory: "스테이크 · 샐러드바", mood: "단체",
+    priceRange: "1인 4~5만원", shortAddr: "아브뉴프랑",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 201호",
+    phone: "전화문의", hours: "매일 11:00~22:00",
+    signature: "프리미엄 스테이크 + 샐러드바",
+    hasRoom: false, roomInfo: "넓은 매장 (단체 좌석 배치 가능)", corkage: "전화 문의", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"평일 런치 (스테이크+샐러드바)",price:"39,700원"},{name:"디너/주말",price:"49,700원"}],
+    naverQuery: "판교 빕스 아브뉴프랑", catchTableId: null, googleQuery: "빕스+판교+아브뉴프랑",
+    note: "30명+ 대규모 단체 수용. 샐러드바. 단체 회식 추천."
+  },
+  {
+    id: 76, name: "아침산저녁바다", category: "한식", subcategory: "요리주점 · 보쌈", mood: "단체",
+    priceRange: "1인 2~4만원", shortAddr: "유스페이스1 2F",
+    address: "경기 성남시 분당구 대왕판교로 660 유스페이스1 2층 217~219호",
+    phone: "031-628-1480", hours: "매일 17:00~02:00",
+    signature: "닭목살튀김, 수육 두부김치, 보쌈",
+    hasRoom: false, roomInfo: "넓은 매장 (단체 가능)", corkage: "전화 문의", parking: "유스페이스 주차장",
+    lat: 37.40032, lng: 127.10675,
+    menus: [{name:"닭목살튀김",price:"25,000원"},{name:"수육 두부김치",price:"35,000원"},{name:"보쌈",price:"35,000원"},{name:"고추튀김",price:"20,000원"}],
+    naverQuery: "판교 아침산저녁바다 유스페이스", catchTableId: null, googleQuery: "아침산저녁바다+판교+유스페이스",
+    note: "새벽 2시까지. 20~30명 단체 가능. 2차 회식 추천."
+  },
+  {
+    id: 77, name: "송계옥 판교점", category: "한식", subcategory: "닭특수부위 구이", mood: "회식",
+    priceRange: "1인 1.2만원~", shortAddr: "판교역로192번길",
+    address: "경기 성남시 분당구 판교역로192번길 22",
+    phone: "전화문의", hours: "일/월/토 15:00~22:00, 화~금 16:00~22:00",
+    signature: "근위, 염통, 안심 등 닭특수부위 구이",
+    hasRoom: false, roomInfo: "단체 테이블 가능", corkage: "전화 문의", parking: "인근 주차장",
+    lat: 37.39420, lng: 127.11180,
+    menus: [{name:"근위",price:"12,000원"},{name:"염통",price:"12,000원"},{name:"안심",price:"14,000원"},{name:"얼그레이 하이볼",price:"8,000원"}],
+    naverQuery: "판교 송계옥 닭특수부위", catchTableId: null, googleQuery: "송계옥+판교+야키토리",
+    note: "직원이 직접 구워줌. 하이볼 인기. 저녁 회식."
+  },
+  {
+    id: 78, name: "오복수산 판교점", category: "일식", subcategory: "카이센동 · 사시미", mood: "접대",
+    priceRange: "1인 2.5~7.9만원", shortAddr: "판교테크원 2F",
+    address: "경기 성남시 분당구 분당내곡로 131 판교테크원 2층 3호",
+    phone: "전화문의", hours: "매일 11:30~21:30 (BT 15:00~17:00, LO 14:30/20:30)",
+    signature: "프리미엄 카이센동, 모듬사시미",
+    hasRoom: false, roomInfo: "확인 필요", corkage: "전화 문의", parking: "테크원 주차장",
+    lat: 37.39546, lng: 127.11213,
+    menus: [{name:"우니/도로/이쿠라/관자/에비",price:"59,000원"},{name:"모듬사시미 (중)",price:"79,000원"},{name:"복어지리탕",price:"25,000원"}],
+    naverQuery: "판교 오복수산 테크원", catchTableId: null, googleQuery: "오복수산+판교+테크원",
+    note: "테크원 2층. 프리미엄 해산물. 접대 적합."
+  },
+  {
+    id: 79, name: "후라토식당 아브뉴프랑점", category: "일식", subcategory: "규카츠 · 오므라이스", mood: "캐주얼",
+    priceRange: "1인 1.1~3만원", shortAddr: "아브뉴프랑 2F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 2층 220호",
+    phone: "050-713-8670", hours: "매일 11:30~22:00 (평일 BT 15:00~17:00)",
+    signature: "규카츠, 규카츠 더블, 오므라이스",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"규카츠",price:"18,000원"},{name:"규카츠 더블",price:"30,000원"},{name:"오므라이스",price:"11,000원"}],
+    naverQuery: "판교 후라토식당 아브뉴프랑", catchTableId: null, googleQuery: "후라토식당+아브뉴프랑+판교",
+    note: "아브뉴프랑 규카츠 맛집."
+  },
+  {
+    id: 80, name: "반포식스 판교점", category: "양식/기타", subcategory: "태국 · 동남아", mood: "캐주얼",
+    priceRange: "1인 1.5~3만원", shortAddr: "판교역로192번길",
+    address: "경기 성남시 분당구 판교역로192번길 12 2층",
+    phone: "전화문의", hours: "매일 영업",
+    signature: "똠양꿍 쌀국수, 푸팟퐁커리",
+    hasRoom: false, roomInfo: "테이블 간격 넓음", corkage: "전화 문의", parking: "메리어트호텔 지하주차 2시간 무료",
+    lat: 37.39420, lng: 127.11150,
+    menus: [{name:"똠양꿍 쌀국수",price:"15,000원"},{name:"푸팟퐁커리 (소프트크랩)",price:"28,000원"},{name:"팟타이",price:"14,000원"}],
+    naverQuery: "판교 반포식스 태국", catchTableId: null, googleQuery: "반포식스+판교+태국음식",
+    note: "판교 태국음식 맛집. 메리어트호텔 건물."
+  },
+  {
+    id: 81, name: "담소사골순대 판교점", category: "한식", subcategory: "순대국", mood: "캐주얼",
+    priceRange: "1인 1~1.1만원", shortAddr: "H스퀘어 S동 1F",
+    address: "경기 성남시 분당구 판교역로 231 H스퀘어 S동 1층",
+    phone: "전화문의", hours: "평일 영업",
+    signature: "육개장, 우순대국, 돈순대국",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "H스퀘어 주차",
+    lat: 37.40150, lng: 127.10800,
+    menus: [{name:"육개장",price:"10,500원"},{name:"우순대국",price:"10,000원"},{name:"돈순대국",price:"10,000원"}],
+    naverQuery: "판교 담소사골순대 H스퀘어", catchTableId: null, googleQuery: "담소사골순대+판교+H스퀘어",
+    note: "NHN 도보 1분. H스퀘어. 깔끔한 순대국."
+  },
+  {
+    id: 82, name: "삼미칼국수", category: "한식", subcategory: "칼국수", mood: "캐주얼",
+    priceRange: "1인 1만원", shortAddr: "삼환하이펙스 B1",
+    address: "경기 성남시 분당구 판교역로 240 삼환하이펙스 지하1층",
+    phone: "전화문의", hours: "평일 11:30~14:30 (하루 3시간, 주말 휴무)",
+    signature: "칼국수 (면/밥 무한리필)",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "해당 없음", parking: "삼환하이펙스 주차",
+    lat: 37.40200, lng: 127.10900,
+    menus: [{name:"칼국수 (면/밥 무한리필)",price:"10,000원"}],
+    naverQuery: "판교 삼미칼국수 삼환하이펙스", catchTableId: null, googleQuery: "삼미칼국수+판교+삼환하이펙스",
+    note: "하루 3시간만 영업. 면/밥 무한리필. 줄서는 맛집."
+  },
+  {
+    id: 83, name: "킨파", category: "일식", subcategory: "연어덮밥 · 스키야키", mood: "캐주얼",
+    priceRange: "1인 1~2.6만원", shortAddr: "판교로227번길",
+    address: "경기 성남시 분당구 판교로227번길 6",
+    phone: "전화문의", hours: "점심/저녁 영업",
+    signature: "츠케사몬동(연어덮밥), 스키야키",
+    hasRoom: false, roomInfo: "룸 없음", corkage: "전화 문의", parking: "인근 주차장",
+    lat: 37.40150, lng: 127.10500,
+    menus: [{name:"츠케사몬동 (연어덮밥)",price:"15,000원"},{name:"연어뱃살 츠케동",price:"19,000원"},{name:"생선구이정식",price:"10,000원"},{name:"스키야키",price:"26,000원"}],
+    naverQuery: "판교 킨파 연어덮밥", catchTableId: null, googleQuery: "킨파+판교+연어",
+    note: "삼평동 연어덮밥 줄서는 맛집."
+  },
+  {
+    id: 84, name: "더플레이스 판교점", category: "양식/기타", subcategory: "이탈리안 · 화덕피자", mood: "캐주얼",
+    priceRange: "1인 1.3~2.6만원", shortAddr: "아브뉴프랑 1F",
+    address: "경기 성남시 분당구 동판교로177번길 25 아브뉴프랑 1층",
+    phone: "전화문의", hours: "매일 10:30~21:30",
+    signature: "화이트 라구 파스타, 라구 라자냐",
+    hasRoom: false, roomInfo: "중규모 가능", corkage: "전화 문의", parking: "아브뉴프랑 주차장",
+    lat: 37.39490, lng: 127.11460,
+    menus: [{name:"화이트 라구 파스타",price:"26,000원"},{name:"라구 파스타",price:"13,000원"},{name:"화이트 크림 파스타",price:"17,000원"},{name:"라구 라자냐",price:"13,000원"}],
+    naverQuery: "판교 더플레이스 아브뉴프랑", catchTableId: null, googleQuery: "더플레이스+아브뉴프랑+판교",
+    note: "아브뉴프랑 이탈리안. 가성비 파스타."
   }
 ];
 
@@ -920,7 +1138,7 @@ function toggleFav(id, e) {
   var openDetail = document.getElementById("overlay").classList.contains("active");
   if (openDetail) { openDetailView(id); }
 }
-var moods = ["전체", "접대", "회식", "캐주얼"];
+var moods = ["전체", "접대", "회식", "단체", "캐주얼"];
 var currentMood = "전체";
 
 function renderMoodTabs() {
@@ -1005,6 +1223,7 @@ function renderList() {
     if (r.parking && r.parking !== '불가' && r.parking !== '불가 (백화점 내)') b += '<span class="badge badge-parking">주차</span>';
     if (r.mood === '접대') b += '<span class="badge badge-formal">접대</span>';
     else if (r.mood === '회식') b += '<span class="badge badge-casual">회식</span>';
+    else if (r.mood === '단체') b += '<span class="badge badge-group">단체</span>';
 
     var star = isFav(r.id) ? '★' : '☆';
     return '<div class="card" onclick="openDetail(' + r.id + ')">' +
